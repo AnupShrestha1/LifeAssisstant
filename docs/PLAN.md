@@ -149,7 +149,7 @@ Each milestone: build, run relevant tests, report what actually ran.
 7. ✅ Expenses: categories, transactions, budgets + warnings, CSV export
 8. ✅ Reports & charts; live dashboard
 9. ✅ Settings completion, clear-all-data
-10. Backup & restore
+10. ✅ Backup & restore (format: docs/BACKUP_FORMAT.md)
 11. Test pass (unit, DAO, migration, Compose UI), defect fixes
 12. Release build, signing, install instructions
 

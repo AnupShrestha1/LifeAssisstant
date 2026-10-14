@@ -32,6 +32,7 @@ import com.anujstha.lifeassistant.ui.journal.JournalScreen
 import com.anujstha.lifeassistant.ui.reminders.ReminderEditScreen
 import com.anujstha.lifeassistant.ui.reminders.RemindersScreen
 import com.anujstha.lifeassistant.ui.settings.AboutScreen
+import com.anujstha.lifeassistant.ui.settings.BackupScreen
 import com.anujstha.lifeassistant.ui.settings.SettingsActions
 import com.anujstha.lifeassistant.ui.settings.SettingsScreen
 import com.anujstha.lifeassistant.ui.tasks.TaskCategoriesScreen
@@ -151,11 +152,13 @@ fun AppNavigation(
                         openTaskCategories = { navController.navigate(TaskCategoriesRoute) },
                         openBudgets = { navController.navigate(BudgetsRoute) },
                         openAbout = { navController.navigate(AboutRoute) },
+                        openBackup = { navController.navigate(BackupRoute) },
                     ),
                 )
             }
             composable<TaskCategoriesRoute> { TaskCategoriesScreen(onBack = { navController.popBackStack() }) }
             composable<AboutRoute> { AboutScreen(onBack = { navController.popBackStack() }) }
+            composable<BackupRoute> { BackupScreen(onBack = { navController.popBackStack() }) }
         }
     }
 }

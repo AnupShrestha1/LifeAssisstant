@@ -57,6 +57,7 @@ data class SettingsActions(
     val openTaskCategories: () -> Unit,
     val openBudgets: () -> Unit,
     val openAbout: () -> Unit,
+    val openBackup: () -> Unit,
 )
 
 @Composable
@@ -190,6 +191,7 @@ private fun SettingsContent(
 
         HorizontalDivider(Modifier.padding(vertical = 8.dp))
         SectionHeader(R.string.settings_section_data)
+        LinkRow(R.string.settings_backup, R.string.settings_backup_hint, onClick = actions.openBackup)
         LinkRow(R.string.settings_export_csv, R.string.settings_export_csv_hint, onClick = onExportCsv)
         ListItem(
             modifier = Modifier.clickable { onOpenDialog(SettingsDialog.CLEAR_DATA) },

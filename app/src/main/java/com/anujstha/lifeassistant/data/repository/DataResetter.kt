@@ -33,19 +33,7 @@ class DataResetter(
         cancelNotifications()
 
         db.withTransaction {
-            // Children before parents, so no foreign key ever points at a deleted row.
-            db.openHelper.writableDatabase.apply {
-                execSQL("DELETE FROM reminder_events")
-                execSQL("DELETE FROM reminders")
-                execSQL("DELETE FROM tasks")
-                execSQL("DELETE FROM task_categories")
-                execSQL("DELETE FROM journal_entry_tags")
-                execSQL("DELETE FROM journal_tags")
-                execSQL("DELETE FROM journal_entries")
-                execSQL("DELETE FROM budgets")
-                execSQL("DELETE FROM transactions")
-                execSQL("DELETE FROM expense_categories")
-            }
+            db.backupDao().deleteAll()
             val now = clock.instant()
             DefaultData.expenseCategories.forEach {
                 db.expenseCategoryDao().insert(ExpenseCategoryEntity(ids.newId(), it, TransactionType.EXPENSE, true, null, now, now))

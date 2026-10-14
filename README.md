@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 9 of 12 — all modules, dashboard, reports and full settings (notification status, categories, CSV export, clear all data, about & privacy). Next: backup and restore.
+Milestone 10 of 12 — all features complete: tasks, reminders, journal, expenses, dashboard, reports, settings, and backup/restore. Remaining: final test pass and release build.
 
 ## Requirements
 
@@ -59,3 +59,5 @@ Then:
 - Uninstalling the app deletes all of its data. Nothing is stored online, so a lost or reset
   phone can only be restored from backups you exported yourself.
 - Settings → Your data → Clear all data deletes everything after typed confirmation.
+- Settings → Your data → Backup and restore saves everything to a JSON file you choose and
+  restores it (merge or replace). Backup files are not encrypted. Format: [docs/BACKUP_FORMAT.md](docs/BACKUP_FORMAT.md).

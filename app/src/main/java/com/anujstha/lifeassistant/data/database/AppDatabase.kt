@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.anujstha.lifeassistant.data.dao.BackupDao
 import com.anujstha.lifeassistant.data.dao.BudgetDao
 import com.anujstha.lifeassistant.data.dao.ExpenseCategoryDao
 import com.anujstha.lifeassistant.data.dao.JournalDao
@@ -52,6 +53,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
     abstract fun reminderDao(): ReminderDao
     abstract fun reminderEventDao(): ReminderEventDao
+    abstract fun backupDao(): BackupDao
 
     companion object {
         const val VERSION = 1
