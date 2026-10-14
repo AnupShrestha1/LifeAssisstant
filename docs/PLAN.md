@@ -132,7 +132,7 @@ Generation stops after the end date. Cancelled ≠ completed.
 Each milestone: build, run relevant tests, report what actually ran.
 
 1. ✅ Project setup, Material 3 theme (light/dark/system), adaptive icon, privacy manifest
-2. Navigation shell + DataStore settings (theme switch live)
+2. ✅ Navigation shell + DataStore settings (theme, currency, time zone, time format)
 3. Room database, entities, DAOs, repositories, `Clock`; DAO tests
 4. Task manager (CRUD, filters, sort, recurrence, overdue)
 5. Reminders: AlarmManager, receivers, WorkManager, permissions, dedup

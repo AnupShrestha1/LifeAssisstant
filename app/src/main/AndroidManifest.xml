@@ -8,6 +8,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".LifeAssistantApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"

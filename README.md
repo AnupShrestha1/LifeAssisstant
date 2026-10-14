@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 1 of 12 — project setup and theme. Feature modules are in progress.
+Milestone 2 of 12 — navigation shell and settings (theme, currency, time zone, time format). Journal, expenses, tasks and reminders are not built yet.
 
 ## Requirements
 

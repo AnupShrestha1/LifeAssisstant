@@ -1,69 +1,51 @@
 package com.anujstha.lifeassistant
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.anujstha.lifeassistant.ui.navigation.AppNavigation
 import com.anujstha.lifeassistant.ui.theme.LifeAssistantTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val settingsRepository = (application as LifeAssistantApp).container.settingsRepository
+
         setContent {
-            LifeAssistantTheme {
-                AppRoot()
+            // Null until DataStore's first read, so we never flash the wrong theme.
+            val settings by settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
+            val themeMode = settings?.themeMode
+            if (themeMode != null) {
+                val darkTheme = themeMode.useDarkTheme(isSystemInDarkTheme())
+
+                // Keep status/navigation bar icon contrast in sync with the app theme, which can
+                // differ from the system theme when the user forces light or dark.
+                DisposableEffect(darkTheme) {
+                    enableEdgeToEdge(
+                        statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkTheme },
+                        navigationBarStyle = SystemBarStyle.auto(LightScrim, DarkScrim) { darkTheme },
+                    )
+                    onDispose {}
+                }
+
+                LifeAssistantTheme(themeMode = themeMode) {
+                    AppNavigation()
+                }
             }
         }
     }
-}
 
-/**
- * Temporary root for milestone 1 (project setup + theme). Replaced by the navigation
- * host with Home / Journal / Expenses / Tasks / Settings in milestone 2.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AppRoot() {
-    Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = "Project setup complete",
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            Text(
-                text = "Version ${BuildConfig.VERSION_NAME}. Feature screens arrive in upcoming milestones.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+    private companion object {
+        // Same scrims androidx.activity uses by default for 3-button navigation.
+        val LightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+        val DarkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AppRootPreview() {
-    LifeAssistantTheme { AppRoot() }
 }
