@@ -29,7 +29,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,6 +64,7 @@ import com.anujstha.lifeassistant.domain.usecase.TaskSort
 import com.anujstha.lifeassistant.domain.usecase.TaskView
 import com.anujstha.lifeassistant.ui.components.Choice
 import com.anujstha.lifeassistant.ui.components.FilterDropdownChip
+import com.anujstha.lifeassistant.ui.components.AppFab
 import com.anujstha.lifeassistant.ui.components.ScreenScaffold
 import com.anujstha.lifeassistant.ui.components.dueLabel
 import com.anujstha.lifeassistant.ui.components.rememberDateFormatter
@@ -109,11 +109,7 @@ fun TasksScreen(
             SortMenu(selected = state.filters.sort, onSelect = viewModel::setSort)
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onNewTask,
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(stringResource(R.string.tasks_new)) },
-            )
+            AppFab(stringResource(R.string.tasks_new), Icons.Filled.Add, onClick = onNewTask)
         },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {

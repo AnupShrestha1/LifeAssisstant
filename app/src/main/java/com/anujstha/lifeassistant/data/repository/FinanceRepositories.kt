@@ -13,7 +13,9 @@ import com.anujstha.lifeassistant.domain.model.TransactionType
 import com.anujstha.lifeassistant.domain.model.validate
 import com.anujstha.lifeassistant.util.IdGenerator
 import com.anujstha.lifeassistant.util.escapeLike
+import com.anujstha.lifeassistant.domain.usecase.FinanceRules
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalTime
@@ -58,6 +60,11 @@ class ExpenseCategoryRepository(
         val clash = dao.findByName(clean, category.type)
         validate(clash == null || clash.id == id) { "A category named \"$clean\" already exists" }
         dao.update(category.copy(name = clean, updatedAt = clock.instant()))
+    }
+
+    /** Un-archives a category so it can be chosen again. */
+    suspend fun restore(id: String) {
+        dao.setArchived(id, archivedAt = null, updatedAt = clock.instant())
     }
 
     /**
@@ -144,6 +151,8 @@ class TransactionRepository(
 
     fun observeCurrencies(): Flow<List<String>> = dao.observeCurrencies()
 
+    fun observeCountNotIn(currency: String): Flow<Int> = dao.observeCountNotIn(currency)
+
     /**
      * Creates ([id] == null) or updates a transaction. Validates the amount, currency, note
      * length and that the category exists and matches the type. New transactions cannot use an
@@ -199,6 +208,27 @@ class BudgetRepository(
     private val dao = db.budgetDao()
 
     fun observeForMonth(yearMonth: YearMonth): Flow<List<BudgetEntity>> = dao.observeForMonth(yearMonth)
+
+    /** Budgets in force for [yearMonth], including ones carried forward from earlier months. */
+    fun observeEffective(yearMonth: YearMonth): Flow<List<BudgetEntity>> =
+        dao.observeUpTo(yearMonth).map { FinanceRules.effectiveBudgets(it, yearMonth) }
+
+    /**
+     * Stops a budget from [yearMonth] on. Earlier months keep their budget (history stays
+     * correct); if an earlier budget exists, a zero-limit row marks "no budget from here".
+     */
+    suspend fun removeBudget(yearMonth: YearMonth, categoryId: String?) {
+        db.withTransaction {
+            if (dao.countBefore(yearMonth, categoryId) == 0) {
+                dao.deleteForScope(yearMonth, categoryId)
+            } else {
+                val now = clock.instant()
+                dao.upsertForScope(
+                    BudgetEntity(ids.newId(), yearMonth, categoryId, 0, "NPR", DEFAULT_WARN_PERCENT, now, now),
+                )
+            }
+        }
+    }
 
     /**
      * Sets the budget for [yearMonth]; [categoryId] null means the overall monthly budget.

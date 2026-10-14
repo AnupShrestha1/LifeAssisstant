@@ -227,6 +227,44 @@ class FinanceRepositoryTest {
     }
 
     @Test
+    fun budget_carriesForward_andRemovalKeepsHistory() = runTest {
+        val sept = YearMonth.of(2026, 9)
+        budgets.setBudget(sept, null, 40_000_00, "NPR")
+
+        assertEquals(40_000_00L, budgets.observeEffective(oct).first().single().limitMinor) // carried into October
+
+        budgets.removeBudget(oct, null)
+        assertTrue(budgets.observeEffective(oct).first().isEmpty()) // none from October
+        assertEquals(40_000_00L, budgets.observeEffective(sept).first().single().limitMinor) // September unchanged
+        assertTrue(budgets.observeEffective(YearMonth.of(2026, 11)).first().isEmpty())
+    }
+
+    @Test
+    fun budget_removalInFirstMonth_deletesRow() = runTest {
+        budgets.setBudget(oct, null, 100, "NPR")
+        budgets.removeBudget(oct, null)
+        assertTrue(budgets.observeForMonth(oct).first().isEmpty())
+    }
+
+    @Test
+    fun archivedCategory_canBeRestored() = runTest {
+        val food = category("Food & Dining")
+        add(100, food, oct1)
+        categories.remove(food.id)
+        categories.restore(food.id)
+        assertTrue(categories.observeActive(EXPENSE).first().any { it.id == food.id })
+    }
+
+    @Test
+    fun countNotInCurrency_flagsOtherCurrencies() = runTest {
+        val food = category("Food & Dining")
+        add(100, food, oct1)
+        add(100, food, oct1, currency = "USD")
+        add(100, food, oct1, currency = "INR")
+        assertEquals(2, transactions.observeCountNotIn("NPR").first())
+    }
+
+    @Test
     fun budget_rejectsInvalidValues() = runTest {
         val salary = category("Salary", INCOME)
         assertThrows(ValidationException::class.java) { kotlinx.coroutines.runBlocking { budgets.setBudget(oct, null, 0, "NPR") } }

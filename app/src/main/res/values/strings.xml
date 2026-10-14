@@ -12,9 +12,6 @@
     <string name="home_today">Today</string>
     <string name="home_dashboard_pending">Your tasks, reminders, journal entries and spending for today will appear here once those modules are built (milestone 8).</string>
 
-    <!-- Modules not built yet -->
-    <string name="not_built_title">Not available yet</string>
-    <string name="not_built_body">%1$s is planned for milestone %2$d and is not implemented in this build.</string>
 
     <!-- Settings -->
     <string name="settings_section_appearance">Appearance</string>
@@ -196,6 +193,79 @@
     <string name="mood_sad">Sad</string>
     <string name="mood_stressed">Stressed</string>
     <string name="mood_excited">Excited</string>
+
+    <!-- Expenses -->
+    <string name="expenses_add">Add</string>
+    <string name="expenses_this_month">This month · %1$s</string>
+    <string name="expenses_income">Income</string>
+    <string name="expenses_expenses">Expenses</string>
+    <string name="expenses_net">Net</string>
+    <string name="expenses_not_bank_balance">Totals of the transactions you recorded here. This is not your bank balance.</string>
+    <string name="expenses_spent_today">Today</string>
+    <string name="expenses_spent_week">This week</string>
+    <string name="expenses_spent_month">This month</string>
+    <string name="expenses_spending">Spending</string>
+    <string name="expenses_budget">Monthly budget</string>
+    <string name="expenses_budget_none">No monthly budget set.</string>
+    <string name="expenses_budget_set">Set budget</string>
+    <string name="expenses_budget_used">%1$s of %2$s used (%3$d%%)</string>
+    <string name="expenses_budget_left">%1$s left</string>
+    <string name="expenses_budget_over">Over budget by %1$s</string>
+    <string name="expenses_budget_warning">You\'ve used %1$d%% of your budget.</string>
+    <string name="expenses_other_currency">%1$d transactions in other currencies aren\'t included in these totals.</string>
+    <string name="expenses_history">Transactions</string>
+    <string name="expenses_search_hint">Search descriptions</string>
+    <string name="expenses_filter_type">Type</string>
+    <string name="expenses_filter_category">Category</string>
+    <string name="expenses_empty">No transactions yet. Tap \"Add\" to record one.</string>
+    <string name="expenses_empty_filtered">No transactions match the current search or filters.</string>
+    <string name="expenses_menu">More options</string>
+    <string name="expenses_categories">Categories</string>
+    <string name="expenses_budgets">Budgets</string>
+    <string name="expenses_export_csv">Export CSV</string>
+    <string name="expenses_export_done">Exported %1$d transactions.</string>
+    <string name="expenses_export_failed">Export failed. Nothing was saved.</string>
+    <string name="type_expense">Expense</string>
+    <string name="type_income">Income</string>
+    <string name="payment_cash">Cash</string>
+    <string name="payment_card">Card</string>
+    <string name="payment_bank_transfer">Bank transfer</string>
+    <string name="payment_mobile_wallet">Mobile wallet</string>
+    <string name="payment_other">Other</string>
+
+    <string name="txn_edit_title_new">New transaction</string>
+    <string name="txn_edit_title_edit">Edit transaction</string>
+    <string name="txn_field_amount">Amount (%1$s)</string>
+    <string name="txn_amount_invalid">Enter an amount like 250 or 1,250.50</string>
+    <string name="txn_field_category">Category</string>
+    <string name="txn_field_payment">Payment method</string>
+    <string name="txn_field_description">Description (optional)</string>
+    <string name="txn_field_time">Time</string>
+    <string name="txn_no_time">No time</string>
+    <string name="txn_choose_category">Choose a category</string>
+    <string name="txn_delete_title">Delete transaction?</string>
+    <string name="txn_delete_body">This permanently deletes the transaction. It can\'t be undone.</string>
+
+    <string name="cat_title">Categories</string>
+    <string name="cat_add">Add category</string>
+    <string name="cat_archived">Archived</string>
+    <string name="cat_restore">Restore</string>
+    <string name="cat_remove_title">Remove \"%1$s\"?</string>
+    <string name="cat_remove_body">Unused categories are deleted. Categories that transactions use are archived instead: hidden from new transactions, but your history keeps them.</string>
+    <string name="cat_remove">Remove</string>
+    <string name="cat_archived_message">\"%1$s\" is used by %2$d transactions, so it was archived instead of deleted.</string>
+    <string name="cat_deleted_message">\"%1$s\" deleted.</string>
+    <string name="cat_default_label">Default</string>
+
+    <string name="budget_title">Budgets</string>
+    <string name="budget_explain">Budgets apply from the month you set them and carry forward until you change or remove them. You\'ll see a warning when spending reaches the threshold.</string>
+    <string name="budget_overall">Overall monthly budget</string>
+    <string name="budget_per_category">Per category</string>
+    <string name="budget_not_set">Not set</string>
+    <string name="budget_amount">Budget amount (%1$s)</string>
+    <string name="budget_warn_at">Warn at %1$d%% used</string>
+    <string name="budget_remove">Remove budget</string>
+    <string name="budget_edit_title">Budget for %1$s</string>
 
     <!-- Common -->
     <string name="action_ok">OK</string>

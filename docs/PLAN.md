@@ -72,6 +72,8 @@ com.anujstha.lifeassistant
   (ISO string); wall-clock times as `LocalTime`.
 - **Migrations:** explicit `Migration` objects + `MigrationTestHelper` tests.
   No `fallbackToDestructiveMigration`.
+- **Budgets** carry forward: a budget applies from its month until changed; a zero-limit
+  row means "removed from this month on", so past months keep their history.
 - **Settings** (DataStore): theme, currency (default NPR), display timezone
   (default Asia/Kathmandu), date/time format, notification prefs, budget warning default.
 
@@ -144,7 +146,7 @@ Each milestone: build, run relevant tests, report what actually ran.
 4. ✅ Task manager (CRUD, filters, sort, recurrence, overdue)
 5. ✅ Reminders: AlarmManager, receivers, WorkManager, permissions, dedup
 6. ✅ Journal: editor, tags, moods, search/filter, calendar view
-7. Expenses: categories, transactions, budgets + warnings, CSV export
+7. ✅ Expenses: categories, transactions, budgets + warnings, CSV export
 8. Reports & charts; live dashboard
 9. Settings completion, clear-all-data
 10. Backup & restore

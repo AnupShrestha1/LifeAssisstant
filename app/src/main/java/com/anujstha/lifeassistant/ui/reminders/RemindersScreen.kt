@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -30,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anujstha.lifeassistant.R
 import com.anujstha.lifeassistant.domain.model.TimeFormat
+import com.anujstha.lifeassistant.ui.components.AppFab
 import com.anujstha.lifeassistant.ui.components.ScreenScaffold
 import com.anujstha.lifeassistant.ui.components.dueLabel
 import java.time.LocalDate
@@ -49,11 +49,7 @@ fun RemindersScreen(
         title = stringResource(R.string.reminders_title),
         onBack = onBack,
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onNewReminder,
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(stringResource(R.string.reminders_new)) },
-            )
+            AppFab(stringResource(R.string.reminders_new), Icons.Filled.Add, onClick = onNewReminder)
         },
     ) { padding ->
         LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(bottom = 88.dp)) {

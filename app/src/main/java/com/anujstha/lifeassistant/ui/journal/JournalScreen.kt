@@ -3,7 +3,6 @@ package com.anujstha.lifeassistant.ui.journal
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,10 +19,6 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.automirrored.filled.ViewList
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,7 +28,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,15 +47,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anujstha.lifeassistant.R
 import com.anujstha.lifeassistant.data.entity.JournalEntryWithTags
 import com.anujstha.lifeassistant.domain.model.Mood
+import com.anujstha.lifeassistant.ui.components.AppFab
 import com.anujstha.lifeassistant.ui.components.Choice
+import com.anujstha.lifeassistant.ui.components.DateRangeDialog
 import com.anujstha.lifeassistant.ui.components.FilterDropdownChip
 import com.anujstha.lifeassistant.ui.components.MonthCalendar
 import com.anujstha.lifeassistant.ui.components.ScreenScaffold
 import com.anujstha.lifeassistant.ui.components.rememberDateFormatter
 import com.anujstha.lifeassistant.ui.components.relativeDate
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
 
 @Composable
 fun JournalScreen(
@@ -102,12 +96,10 @@ fun JournalScreen(
             }
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                // In calendar mode a new entry defaults to the selected day.
-                onClick = { onNewEntry(if (state.mode == JournalMode.CALENDAR) state.selectedDay else null) },
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(stringResource(R.string.journal_new)) },
-            )
+            // In calendar mode a new entry defaults to the selected day.
+            AppFab(stringResource(R.string.journal_new), Icons.Filled.Add) {
+                onNewEntry(if (state.mode == JournalMode.CALENDAR) state.selectedDay else null)
+            }
         },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
@@ -280,35 +272,5 @@ private fun EntryRow(item: JournalEntryWithTags, onClick: () -> Unit) {
         if (meta.isNotEmpty()) {
             Text(meta, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DateRangeDialog(
-    initialFrom: LocalDate?,
-    initialTo: LocalDate?,
-    onConfirm: (LocalDate?, LocalDate?) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    fun LocalDate.millis() = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-    fun Long.date() = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
-    val state = rememberDateRangePickerState(
-        initialSelectedStartDateMillis = initialFrom?.millis(),
-        initialSelectedEndDateMillis = initialTo?.millis(),
-    )
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                val from = state.selectedStartDateMillis?.date()
-                onConfirm(from, state.selectedEndDateMillis?.date() ?: from)
-            }) { Text(stringResource(R.string.action_ok)) }
-        },
-        dismissButton = {
-            TextButton(onClick = { onConfirm(null, null) }) { Text(stringResource(R.string.clear)) }
-        },
-    ) {
-        Box(Modifier.weight(1f)) { DateRangePicker(state = state, showModeToggle = false) }
     }
 }

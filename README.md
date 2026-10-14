@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 6 of 12 — navigation, settings, database layer, task manager, reminders with real Android notifications, and the journal. The expense tracker is not built yet.
+Milestone 7 of 12 — all five modules work: tasks, reminders with real notifications, journal, and the expense/income tracker with budgets and CSV export. Next: reports and the live dashboard.
 
 ## Requirements
 

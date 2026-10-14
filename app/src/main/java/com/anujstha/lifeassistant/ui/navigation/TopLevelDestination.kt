@@ -32,6 +32,13 @@ import kotlin.reflect.KClass
 /** Journal editor; [entryId] null writes a new entry dated [date] (ISO yyyy-MM-dd) or today. */
 @Serializable data class JournalEditRoute(val entryId: String? = null, val date: String? = null)
 
+/** Transaction editor; null id records a new one. */
+@Serializable data class TransactionEditRoute(val transactionId: String? = null)
+
+@Serializable data object ExpenseCategoriesRoute
+
+@Serializable data object BudgetsRoute
+
 /** Reminder list + fired-reminder inbox (reached from Home, task editor, and notifications). */
 @Serializable data object RemindersRoute
 

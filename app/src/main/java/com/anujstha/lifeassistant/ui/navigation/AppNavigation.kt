@@ -19,9 +19,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.anujstha.lifeassistant.R
-import com.anujstha.lifeassistant.ui.components.NotBuiltYetScreen
 import com.anujstha.lifeassistant.ui.dashboard.HomeScreen
+import com.anujstha.lifeassistant.ui.expenses.BudgetsScreen
+import com.anujstha.lifeassistant.ui.expenses.CategoriesScreen
+import com.anujstha.lifeassistant.ui.expenses.ExpensesScreen
+import com.anujstha.lifeassistant.ui.expenses.TransactionEditScreen
 import com.anujstha.lifeassistant.ui.journal.JournalEditScreen
 import com.anujstha.lifeassistant.ui.journal.JournalEntryScreen
 import com.anujstha.lifeassistant.ui.journal.JournalScreen
@@ -87,7 +89,17 @@ fun AppNavigation(
                 )
             }
             composable<JournalEditRoute> { JournalEditScreen(onDone = { navController.popBackStack() }) }
-            composable<ExpensesRoute> { NotBuiltYetScreen(R.string.nav_expenses, milestone = 7) }
+            composable<ExpensesRoute> {
+                ExpensesScreen(
+                    onOpenTransaction = { navController.navigate(TransactionEditRoute(it)) },
+                    onNewTransaction = { navController.navigate(TransactionEditRoute()) },
+                    onOpenCategories = { navController.navigate(ExpenseCategoriesRoute) },
+                    onOpenBudgets = { navController.navigate(BudgetsRoute) },
+                )
+            }
+            composable<TransactionEditRoute> { TransactionEditScreen(onDone = { navController.popBackStack() }) }
+            composable<ExpenseCategoriesRoute> { CategoriesScreen(onBack = { navController.popBackStack() }) }
+            composable<BudgetsRoute> { BudgetsScreen(onBack = { navController.popBackStack() }) }
             composable<TasksRoute> {
                 TasksScreen(
                     onOpenTask = { navController.navigate(TaskEditRoute(it)) },

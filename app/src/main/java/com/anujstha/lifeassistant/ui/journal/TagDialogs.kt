@@ -110,6 +110,7 @@ fun TagNameDialog(
     confirmLabel: String,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit,
+    fieldLabel: String = stringResource(R.string.journal_tag_name),
 ) {
     var name by rememberSaveable { mutableStateOf(initial) }
     AlertDialog(
@@ -119,7 +120,7 @@ fun TagNameDialog(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text(stringResource(R.string.journal_tag_name)) },
+                label = { Text(fieldLabel) },
                 singleLine = true,
             )
         },

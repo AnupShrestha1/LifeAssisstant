@@ -55,7 +55,7 @@ class MainActivityTest {
     fun bottomNav_switchesBetweenTopLevelScreens() {
         navItem("Expenses").performClick()
         navItem("Expenses").assertIsSelected()
-        composeRule.onNodeWithText("Not available yet").assertIsDisplayed()
+        composeRule.onNodeWithText("Monthly budget").assertIsDisplayed()
 
         navItem("Journal").performClick()
         navItem("Journal").assertIsSelected()

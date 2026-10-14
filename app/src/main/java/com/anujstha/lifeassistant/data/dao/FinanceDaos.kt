@@ -127,6 +127,10 @@ interface TransactionDao {
     @Query("SELECT COUNT(*) FROM transactions WHERE categoryId = :categoryId")
     suspend fun countForCategory(categoryId: String): Int
 
+    /** How many transactions are recorded in a currency other than [currency] (excluded from its totals). */
+    @Query("SELECT COUNT(*) FROM transactions WHERE currencyCode != :currency")
+    fun observeCountNotIn(currency: String): Flow<Int>
+
     /** Currencies present in the data, so reports can flag records not in the current currency. */
     @Query("SELECT DISTINCT currencyCode FROM transactions ORDER BY currencyCode")
     fun observeCurrencies(): Flow<List<String>>
@@ -147,6 +151,16 @@ interface BudgetDao {
 
     @Query("SELECT * FROM budgets WHERE yearMonth = :yearMonth")
     fun observeForMonth(yearMonth: YearMonth): Flow<List<BudgetEntity>>
+
+    /** Every budget set in or before [yearMonth] ("yyyy-MM" text compares chronologically). */
+    @Query("SELECT * FROM budgets WHERE yearMonth <= :yearMonth ORDER BY yearMonth DESC")
+    fun observeUpTo(yearMonth: YearMonth): Flow<List<BudgetEntity>>
+
+    @Query("SELECT COUNT(*) FROM budgets WHERE yearMonth < :yearMonth AND categoryId IS :categoryId")
+    suspend fun countBefore(yearMonth: YearMonth, categoryId: String?): Int
+
+    @Query("DELETE FROM budgets WHERE yearMonth = :yearMonth AND categoryId IS :categoryId")
+    suspend fun deleteForScope(yearMonth: YearMonth, categoryId: String?): Int
 
     @Query("DELETE FROM budgets WHERE id = :id")
     suspend fun delete(id: String): Int
