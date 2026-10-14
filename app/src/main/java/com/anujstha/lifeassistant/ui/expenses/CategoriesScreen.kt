@@ -112,7 +112,7 @@ fun CategoriesScreen(
         viewModel.messages.collect { m ->
             snackbar.showSnackbar(
                 when (m) {
-                    is CategoryMessage.Archived -> context.getString(R.string.cat_archived_message, m.name, m.count)
+                    is CategoryMessage.Archived -> context.resources.getQuantityString(R.plurals.cat_archived_message, m.count, m.name, m.count)
                     is CategoryMessage.Deleted -> context.getString(R.string.cat_deleted_message, m.name)
                     is CategoryMessage.Error -> m.text
                 },

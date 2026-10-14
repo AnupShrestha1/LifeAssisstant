@@ -64,7 +64,7 @@ fun BackupScreen(onBack: () -> Unit, viewModel: BackupViewModel = viewModel(fact
         viewModel.messages.collect { m ->
             snackbar.showSnackbar(
                 when (m) {
-                    is BackupMessage.Created -> context.getString(R.string.backup_created, m.records)
+                    is BackupMessage.Created -> context.resources.getQuantityString(R.plurals.backup_created, m.records, m.records)
                     BackupMessage.CreateFailed -> context.getString(R.string.backup_create_failed)
                     BackupMessage.ReadFailed -> context.getString(R.string.backup_read_failed)
                     BackupMessage.TooLarge -> context.getString(R.string.backup_too_large)
@@ -174,7 +174,7 @@ private fun SummaryCard(
             if (s.mode == RestoreMode.MERGE) {
                 Text(stringResource(R.string.backup_merge_explain), style = MaterialTheme.typography.bodySmall)
                 if (s.preview.alreadyPresent > 0) {
-                    Text(stringResource(R.string.backup_merge_present, s.preview.alreadyPresent), style = MaterialTheme.typography.bodySmall)
+                    Text(pluralStringResource(R.plurals.backup_merge_present, s.preview.alreadyPresent, s.preview.alreadyPresent), style = MaterialTheme.typography.bodySmall)
                 }
             } else {
                 Text(stringResource(R.string.backup_replace_explain), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)

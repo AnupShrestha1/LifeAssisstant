@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Life Assistant</string>
 
     <!-- Navigation -->
@@ -16,7 +16,7 @@
     <string name="home_add_task">Task</string>
     <string name="home_add_reminder">Reminder</string>
     <string name="home_tasks_today">Tasks today</string>
-    <string name="home_tasks_counts">%1$d done · %2$d pending</string>
+    <string name="home_tasks_counts" tools:ignore="PluralsCandidate">%1$d done · %2$d pending</string>
     <string name="home_tasks_none_today">Nothing due today.</string>
     <string name="home_overdue">Overdue</string>
     <string name="home_upcoming_reminders">Upcoming reminders</string>
@@ -89,7 +89,7 @@
     <string name="backup_warning">Backup files are not encrypted. Anyone who can open the file can read your journal and finances, so keep it somewhere private.</string>
     <string name="backup_create">Create backup</string>
     <string name="backup_restore">Restore from backup</string>
-    <string name="backup_created">Backup saved (%1$d records).</string>
+    <plurals name="backup_created"><item quantity="one">Backup saved (%1$d record).</item><item quantity="other">Backup saved (%1$d records).</item></plurals>
     <string name="backup_create_failed">Couldn\'t save the backup. Nothing was written.</string>
     <string name="backup_read_failed">Couldn\'t open that file.</string>
     <string name="backup_too_large">That file is too large to be a Life Assistant backup.</string>
@@ -109,14 +109,14 @@
     <string name="backup_mode_merge">Merge</string>
     <string name="backup_mode_replace">Replace all</string>
     <string name="backup_merge_explain">Adds records from the backup that aren\'t on this phone. Nothing here is changed or deleted, and your current settings are kept. Categories and tags with the same name are reused.</string>
-    <string name="backup_merge_present">%1$d records are already on this phone and will be skipped.</string>
+    <plurals name="backup_merge_present"><item quantity="one">%1$d record is already on this phone and will be skipped.</item><item quantity="other">%1$d records are already on this phone and will be skipped.</item></plurals>
     <string name="backup_replace_explain">Deletes everything currently in the app, then restores the backup exactly, including its settings. This cannot be undone.</string>
     <string name="backup_do_restore">Restore</string>
     <string name="backup_replace_confirm_title">Replace all data?</string>
     <string name="backup_replace_confirm_body">Everything currently in the app will be deleted and replaced by the backup.</string>
     <string name="backup_replace_type">Type REPLACE to confirm</string>
     <string name="backup_replace_word">REPLACE</string>
-    <string name="backup_restored">Restore complete: %1$d added, %2$d skipped, %3$d reminders scheduled.</string>
+    <string name="backup_restored" tools:ignore="PluralsCandidate">Restore complete: %1$d added, %2$d skipped, %3$d reminders scheduled.</string>
     <string name="backup_restore_failed">Restore failed and nothing was changed.</string>
     <string name="task_categories_title">Task categories</string>
     <string name="task_category_delete_title">Delete \"%1$s\"?</string>
@@ -188,7 +188,6 @@
     <string name="task_field_status">Status</string>
     <string name="task_field_category">Category</string>
     <string name="task_field_due_date">Due date</string>
-    <string name="task_field_due_time">Due time</string>
     <string name="task_no_due_date">No due date</string>
     <string name="task_no_due_time">No time</string>
     <string name="task_remove_time">Remove time</string>
@@ -239,11 +238,9 @@
     <string name="reminders_missed_label">Missed · %1$s</string>
     <string name="reminders_for_task">Task: %1$s</string>
     <string name="reminders_enabled">Enabled</string>
-    <string name="reminders_next">Next: %1$s</string>
     <string name="reminders_notif_off_title">Notifications are off</string>
     <string name="reminders_notif_off_body">Reminders will still be recorded here, but your phone won\'t alert you. Allow notifications so reminders can alert you when the app is closed.</string>
     <string name="reminders_notif_allow">Allow notifications</string>
-    <string name="reminders_open_settings">Open settings</string>
     <string name="reminders_exact_off_title">Reminders may be a few minutes late</string>
     <string name="reminders_exact_off_body">Android hasn\'t allowed this app to use exact alarms, so it may delay reminders to save battery. Allow \"Alarms &amp; reminders\" for on-time alerts. Battery savers on some phones can still delay alerts.</string>
     <string name="reminders_exact_allow">Allow exact alarms</string>
@@ -251,8 +248,6 @@
     <string name="reminder_edit_title_edit">Edit reminder</string>
     <string name="reminder_field_title">Title</string>
     <string name="reminder_field_note">Note (optional)</string>
-    <string name="reminder_field_date">Date</string>
-    <string name="reminder_field_time">Time</string>
     <string name="reminder_zone_note">Time is in %1$s.</string>
     <string name="reminder_not_now">Not now</string>
     <string name="reminder_delete_title">Delete reminder?</string>
@@ -260,7 +255,7 @@
     <string name="task_reminders">Reminders</string>
     <string name="task_add_reminder">Add reminder</string>
     <string name="home_reminders">Reminders</string>
-    <string name="home_reminders_fired">%1$d fired</string>
+    <string name="home_reminders_fired" tools:ignore="PluralsCandidate">%1$d fired</string>
 
     <!-- Journal -->
     <string name="journal_new">New entry</string>
@@ -325,7 +320,7 @@
     <string name="expenses_budget_left">%1$s left</string>
     <string name="expenses_budget_over">Over budget by %1$s</string>
     <string name="expenses_budget_warning">You\'ve used %1$d%% of your budget.</string>
-    <string name="expenses_other_currency">%1$d transactions in other currencies aren\'t included in these totals.</string>
+    <plurals name="expenses_other_currency"><item quantity="one">%1$d transaction in another currency isn\'t included in these totals.</item><item quantity="other">%1$d transactions in other currencies aren\'t included in these totals.</item></plurals>
     <string name="expenses_history">Transactions</string>
     <string name="expenses_search_hint">Search descriptions</string>
     <string name="expenses_filter_type">Type</string>
@@ -336,7 +331,7 @@
     <string name="expenses_categories">Categories</string>
     <string name="expenses_budgets">Budgets</string>
     <string name="expenses_export_csv">Export CSV</string>
-    <string name="expenses_export_done">Exported %1$d transactions.</string>
+    <plurals name="expenses_export_done"><item quantity="one">Exported %1$d transaction.</item><item quantity="other">Exported %1$d transactions.</item></plurals>
     <string name="expenses_export_failed">Export failed. Nothing was saved.</string>
     <string name="type_expense">Expense</string>
     <string name="type_income">Income</string>
@@ -353,7 +348,6 @@
     <string name="txn_field_category">Category</string>
     <string name="txn_field_payment">Payment method</string>
     <string name="txn_field_description">Description (optional)</string>
-    <string name="txn_field_time">Time</string>
     <string name="txn_no_time">No time</string>
     <string name="txn_choose_category">Choose a category</string>
     <string name="txn_delete_title">Delete transaction?</string>
@@ -366,7 +360,7 @@
     <string name="cat_remove_title">Remove \"%1$s\"?</string>
     <string name="cat_remove_body">Unused categories are deleted. Categories that transactions use are archived instead: hidden from new transactions, but your history keeps them.</string>
     <string name="cat_remove">Remove</string>
-    <string name="cat_archived_message">\"%1$s\" is used by %2$d transactions, so it was archived instead of deleted.</string>
+    <plurals name="cat_archived_message"><item quantity="one">\"%1$s\" is used by %2$d transaction, so it was archived instead of deleted.</item><item quantity="other">\"%1$s\" is used by %2$d transactions, so it was archived instead of deleted.</item></plurals>
     <string name="cat_deleted_message">\"%1$s\" deleted.</string>
     <string name="cat_default_label">Default</string>
 

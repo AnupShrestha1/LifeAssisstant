@@ -1,5 +1,6 @@
 package com.anujstha.lifeassistant.ui.journal
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
@@ -15,6 +16,8 @@ import com.anujstha.lifeassistant.domain.model.Mood
 import com.anujstha.lifeassistant.domain.model.ValidationException
 import com.anujstha.lifeassistant.ui.navigation.JournalEditRoute
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -53,6 +56,8 @@ class JournalEditViewModel(
     private val repository: JournalRepository,
     settingsRepository: SettingsRepository,
     clock: Clock,
+    /** Survives process death, so a half-written entry isn't lost when Android reclaims memory. */
+    private val savedState: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(JournalEditState(isNew = entryId == null))
@@ -63,6 +68,13 @@ class JournalEditViewModel(
 
     init {
         viewModelScope.launch {
+            // Restoring after process death: use the saved draft instead of reloading.
+            val savedDraft = savedState.get<String>(KEY_DRAFT)?.let(::decodeDraft)
+            val savedOriginal = savedState.get<String>(KEY_ORIGINAL)?.let(::decodeDraft)
+            if (savedDraft != null && savedOriginal != null) {
+                _state.value = JournalEditState(loaded = true, isNew = entryId == null, draft = savedDraft, original = savedOriginal)
+                return@launch
+            }
             val draft = if (entryId != null) {
                 val item = repository.observeEntry(entryId).first()
                 if (item == null) {
@@ -75,11 +87,15 @@ class JournalEditViewModel(
                 JournalDraft(date = initialDate ?: today)
             }
             _state.value = JournalEditState(loaded = true, isNew = entryId == null, draft = draft, original = draft)
+            savedState[KEY_ORIGINAL] = encodeDraft(draft)
+            savedState[KEY_DRAFT] = encodeDraft(draft)
         }
     }
 
-    private fun edit(block: (JournalDraft) -> JournalDraft) =
+    private fun edit(block: (JournalDraft) -> JournalDraft) {
         _state.update { it.copy(draft = block(it.draft), error = null) }
+        savedState[KEY_DRAFT] = encodeDraft(_state.value.draft)
+    }
 
     fun setTitle(v: String) = edit { it.copy(title = v) }
     fun setBody(v: String) = edit { it.copy(body = v) }
@@ -117,9 +133,27 @@ class JournalEditViewModel(
     }
 
     companion object {
+        private const val KEY_DRAFT = "journal_draft"
+        private const val KEY_ORIGINAL = "journal_original"
+        private val draftJson = Json { ignoreUnknownKeys = true }
+
+        @Serializable
+        private data class SavedDraft(val title: String, val body: String, val date: String, val mood: String?, val tagIds: List<String>)
+
+        internal fun encodeDraft(d: JournalDraft): String = draftJson.encodeToString(
+            SavedDraft.serializer(),
+            SavedDraft(d.title, d.body, d.date.toString(), d.mood?.name, d.tagIds.toList()),
+        )
+
+        internal fun decodeDraft(text: String): JournalDraft? = runCatching {
+            val s = draftJson.decodeFromString(SavedDraft.serializer(), text)
+            JournalDraft(s.title, s.body, LocalDate.parse(s.date), s.mood?.let(Mood::valueOf), s.tagIds.toSet())
+        }.getOrNull()
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val route = createSavedStateHandle().toRoute<JournalEditRoute>()
+                val handle = createSavedStateHandle()
+                val route = handle.toRoute<JournalEditRoute>()
                 val c = appContainer()
                 JournalEditViewModel(
                     route.entryId,
@@ -127,6 +161,7 @@ class JournalEditViewModel(
                     c.journalRepository,
                     c.settingsRepository,
                     c.clock,
+                    handle,
                 )
             }
         }

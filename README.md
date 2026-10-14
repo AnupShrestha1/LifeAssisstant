@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 10 of 12 — all features complete: tasks, reminders, journal, expenses, dashboard, reports, settings, and backup/restore. Remaining: final test pass and release build.
+Milestone 11 of 12 — feature-complete and tested (83 unit tests, 99 device tests, lint clean, stress-tested). Remaining: release build and install instructions.
 
 ## Requirements
 

@@ -69,7 +69,7 @@ class MainActivityTest {
         composeRule.onNodeWithText("Theme").assertIsDisplayed()
 
         navItem("Home").performClick()
-        composeRule.onNodeWithText("Today").assertIsDisplayed()
+        composeRule.onNodeWithText("Quick add").assertIsDisplayed() // unique on Home ("Today" can also label a journal entry)
     }
 
     @Test

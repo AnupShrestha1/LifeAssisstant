@@ -78,7 +78,7 @@ fun SettingsScreen(
         dataViewModel.messages.collect { m ->
             snackbar.showSnackbar(
                 when (m) {
-                    is DataMessage.Exported -> context.getString(R.string.expenses_export_done, m.count)
+                    is DataMessage.Exported -> context.resources.getQuantityString(R.plurals.expenses_export_done, m.count, m.count)
                     DataMessage.ExportFailed -> context.getString(R.string.expenses_export_failed)
                     DataMessage.Cleared -> context.getString(R.string.settings_cleared)
                 },

@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -90,7 +91,7 @@ fun ExpensesScreen(
         viewModel.messages.collect { message ->
             snackbar.showSnackbar(
                 when (message) {
-                    is ExpensesMessage.Exported -> context.getString(R.string.expenses_export_done, message.count)
+                    is ExpensesMessage.Exported -> context.resources.getQuantityString(R.plurals.expenses_export_done, message.count, message.count)
                     ExpensesMessage.ExportFailed -> context.getString(R.string.expenses_export_failed)
                 },
             )
@@ -160,7 +161,7 @@ fun ExpensesScreen(
                 if (state.otherCurrencyCount > 0) {
                     item {
                         Text(
-                            stringResource(R.string.expenses_other_currency, state.otherCurrencyCount),
+                            pluralStringResource(R.plurals.expenses_other_currency, state.otherCurrencyCount, state.otherCurrencyCount),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),

@@ -195,6 +195,28 @@ class ReminderRepositoryTest {
     }
 
     @Test
+    fun clockMovedBackward_keepsTheSameOccurrence_noDuplicateOrLoss() = runTest {
+        val id = create(rule = RecurrenceRule(RecurrenceFrequency.DAILY))
+        scheduler.scheduled.clear()
+        clock.now = clock.now.minus(Duration.ofDays(2)) // user sets the clock back two days (TIME_SET)
+
+        assertTrue(repo.rescheduleAll().isEmpty()) // nothing "missed"
+        assertEquals(today18Instant, scheduler.scheduled[id]) // still the same, not-yet-delivered occurrence
+        assertTrue(db.reminderEventDao().getForReminder(id).isEmpty())
+    }
+
+    @Test
+    fun displayTimeZoneSetting_neverMovesAReminder() = runTest {
+        // Reminders are stored with their own zone; the display preference isn't an input to scheduling.
+        val id = create()
+        val before = reminder(id)
+        repo.rescheduleAll()
+        assertEquals(before.nextTriggerAt, reminder(id).nextTriggerAt)
+        assertEquals("Asia/Kathmandu", reminder(id).zoneId)
+        assertEquals(today18Instant, before.nextTriggerAt)
+    }
+
+    @Test
     fun rescheduleAll_reRegistersFutureAlarmsWithoutEvents() = runTest {
         val id = create()
         scheduler.scheduled.clear()
