@@ -155,6 +155,17 @@ class JournalRepositoryTest {
         assertEquals(listOf("B"), repo.observeEntry(id).first()!!.tags.map { it.name })
     }
 
+    @Test
+    fun savingWithATagDeletedMeanwhile_skipsThatTag_insteadOfFailing() = runTest {
+        val kept = repo.createTag("Kept")
+        val gone = repo.createTag("Gone")
+        repo.deleteTag(gone.id)
+
+        val id = repo.saveEntry(null, "T", "x", oct14, null, setOf(kept.id, gone.id))
+
+        assertEquals(listOf("Kept"), repo.observeEntry(id).first()!!.tags.map { it.name })
+    }
+
     @Test(expected = ValidationException::class)
     fun emptyEntry_isRejected() = runTest {
         repo.saveEntry(null, "   ", "  \n ", oct14, null, emptySet())

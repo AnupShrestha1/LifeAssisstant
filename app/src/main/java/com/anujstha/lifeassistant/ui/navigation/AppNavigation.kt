@@ -22,6 +22,9 @@ import androidx.navigation.compose.rememberNavController
 import com.anujstha.lifeassistant.R
 import com.anujstha.lifeassistant.ui.components.NotBuiltYetScreen
 import com.anujstha.lifeassistant.ui.dashboard.HomeScreen
+import com.anujstha.lifeassistant.ui.journal.JournalEditScreen
+import com.anujstha.lifeassistant.ui.journal.JournalEntryScreen
+import com.anujstha.lifeassistant.ui.journal.JournalScreen
 import com.anujstha.lifeassistant.ui.reminders.ReminderEditScreen
 import com.anujstha.lifeassistant.ui.reminders.RemindersScreen
 import com.anujstha.lifeassistant.ui.settings.SettingsScreen
@@ -71,7 +74,19 @@ fun AppNavigation(
     ) {
         NavHost(navController = navController, startDestination = HomeRoute) {
             composable<HomeRoute> { HomeScreen(onOpenReminders = { navController.navigate(RemindersRoute) }) }
-            composable<JournalRoute> { NotBuiltYetScreen(R.string.nav_journal, milestone = 6) }
+            composable<JournalRoute> {
+                JournalScreen(
+                    onOpenEntry = { navController.navigate(JournalEntryRoute(it)) },
+                    onNewEntry = { date -> navController.navigate(JournalEditRoute(date = date?.toString())) },
+                )
+            }
+            composable<JournalEntryRoute> {
+                JournalEntryScreen(
+                    onBack = { navController.popBackStack() },
+                    onEdit = { navController.navigate(JournalEditRoute(entryId = it)) },
+                )
+            }
+            composable<JournalEditRoute> { JournalEditScreen(onDone = { navController.popBackStack() }) }
             composable<ExpensesRoute> { NotBuiltYetScreen(R.string.nav_expenses, milestone = 7) }
             composable<TasksRoute> {
                 TasksScreen(

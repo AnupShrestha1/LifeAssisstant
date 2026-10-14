@@ -35,8 +35,10 @@ class AlarmIntegrationTest {
     private val scheduler = AlarmManagerReminderScheduler(context)
     private val created = mutableListOf<String>()
 
+    /** Runs a shell command and waits for it to finish (reading the output to EOF). */
     private fun shell(command: String) {
-        instrumentation.uiAutomation.executeShellCommand(command).close()
+        val pfd = instrumentation.uiAutomation.executeShellCommand(command)
+        android.os.ParcelFileDescriptor.AutoCloseInputStream(pfd).use { it.readBytes() }
     }
 
     @Before

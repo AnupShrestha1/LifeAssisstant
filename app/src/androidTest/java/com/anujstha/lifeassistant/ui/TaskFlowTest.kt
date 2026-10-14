@@ -69,8 +69,8 @@ class TaskFlowTest {
         composeRule.waitUntil(5_000) {
             runBlocking { repo.observeTasks(query = title).first().single().status == TaskStatus.COMPLETED }
         }
-        composeRule.waitForIdle()
-        checkbox.assertIsOn()
+        // Room notifies the list on a background thread, so wait for the row to re-render.
+        composeRule.waitUntil(5_000) { runCatching { checkbox.assertIsOn() }.isSuccess }
         tab("Completed").performClick()
         composeRule.waitUntilAtLeastOneExists(hasText(title), timeoutMillis = 5_000)
         composeRule.onNodeWithText(title).assertIsDisplayed()

@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 5 of 12 — navigation, settings, database layer, task manager, and reminders with real Android notifications. Journal and expenses are not built yet.
+Milestone 6 of 12 — navigation, settings, database layer, task manager, reminders with real Android notifications, and the journal. The expense tracker is not built yet.
 
 ## Requirements
 

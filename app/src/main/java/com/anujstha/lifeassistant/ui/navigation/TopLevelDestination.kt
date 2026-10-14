@@ -26,6 +26,12 @@ import kotlin.reflect.KClass
 /** Task editor; [taskId] null creates a new task. */
 @Serializable data class TaskEditRoute(val taskId: String? = null)
 
+/** Read-only view of one journal entry. */
+@Serializable data class JournalEntryRoute(val entryId: String)
+
+/** Journal editor; [entryId] null writes a new entry dated [date] (ISO yyyy-MM-dd) or today. */
+@Serializable data class JournalEditRoute(val entryId: String? = null, val date: String? = null)
+
 /** Reminder list + fired-reminder inbox (reached from Home, task editor, and notifications). */
 @Serializable data object RemindersRoute
 

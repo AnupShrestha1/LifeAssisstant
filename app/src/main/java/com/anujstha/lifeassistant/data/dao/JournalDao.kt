@@ -89,11 +89,18 @@ interface JournalDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertEntryTags(refs: List<JournalEntryTagCrossRef>)
 
-    /** Saves an entry and replaces its tag links atomically. */
+    @Query("SELECT id FROM journal_tags WHERE id IN (:ids)")
+    suspend fun existingTagIds(ids: Collection<String>): List<String>
+
+    /**
+     * Saves an entry and replaces its tag links atomically. Tag ids that no longer exist (deleted
+     * while the entry was being edited) are skipped instead of failing the save.
+     */
     @Transaction
     suspend fun saveEntryWithTags(entry: JournalEntryEntity, tagIds: Collection<String>) {
         upsertEntry(entry)
         clearTagsForEntry(entry.id)
-        insertEntryTags(tagIds.map { JournalEntryTagCrossRef(entry.id, it) })
+        val valid = if (tagIds.isEmpty()) emptyList() else existingTagIds(tagIds)
+        insertEntryTags(valid.map { JournalEntryTagCrossRef(entry.id, it) })
     }
 }

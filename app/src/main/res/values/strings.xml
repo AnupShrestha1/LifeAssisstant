@@ -152,6 +152,51 @@
     <string name="home_reminders">Reminders</string>
     <string name="home_reminders_fired">%1$d fired</string>
 
+    <!-- Journal -->
+    <string name="journal_new">New entry</string>
+    <string name="journal_search_hint">Search titles and text</string>
+    <string name="journal_view_list">List</string>
+    <string name="journal_view_calendar">Calendar</string>
+    <string name="journal_filter_mood">Mood</string>
+    <string name="journal_filter_tag">Tag</string>
+    <string name="journal_filter_dates">Dates</string>
+    <string name="journal_clear_filters">Clear filters</string>
+    <string name="journal_manage_tags">Manage tags</string>
+    <string name="journal_empty">Your journal is empty. Tap \"New entry\" to write your first one.</string>
+    <string name="journal_empty_filtered">No entries match the current search or filters.</string>
+    <string name="journal_empty_day">No entries on this day.</string>
+    <string name="journal_untitled">Untitled</string>
+    <string name="journal_edited">Edited %1$s</string>
+    <string name="journal_created">Written %1$s</string>
+    <string name="journal_edit_title_new">New entry</string>
+    <string name="journal_edit_title_edit">Edit entry</string>
+    <string name="journal_field_title">Title (optional)</string>
+    <string name="journal_field_body">Write here…</string>
+    <string name="journal_field_mood">Mood (optional)</string>
+    <string name="journal_field_tags">Tags</string>
+    <string name="journal_new_tag">New tag</string>
+    <string name="journal_tag_name">Tag name</string>
+    <string name="journal_rename_tag">Rename tag</string>
+    <string name="journal_delete_tag_title">Delete tag \"%1$s\"?</string>
+    <string name="journal_delete_tag_body">The tag is removed from all entries. The entries themselves are kept.</string>
+    <string name="journal_no_tags">No tags yet. Add one while writing an entry, or create one here.</string>
+    <string name="journal_delete_title">Delete entry?</string>
+    <string name="journal_delete_body">This permanently deletes the entry. It can\'t be undone.</string>
+    <string name="journal_discard_title">Discard changes?</string>
+    <string name="journal_discard_body">You have unsaved changes to this entry.</string>
+    <string name="journal_discard">Discard</string>
+    <string name="journal_keep_editing">Keep editing</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_rename">Rename</string>
+    <string name="action_done">Done</string>
+    <string name="calendar_previous_month">Previous month</string>
+    <string name="calendar_next_month">Next month</string>
+    <string name="mood_happy">Happy</string>
+    <string name="mood_neutral">Neutral</string>
+    <string name="mood_sad">Sad</string>
+    <string name="mood_stressed">Stressed</string>
+    <string name="mood_excited">Excited</string>
+
     <!-- Common -->
     <string name="action_ok">OK</string>
     <string name="action_save">Save</string>

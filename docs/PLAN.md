@@ -143,7 +143,7 @@ Each milestone: build, run relevant tests, report what actually ran.
 3. ✅ Room database, entities, DAOs, repositories, `Clock`; DAO tests
 4. ✅ Task manager (CRUD, filters, sort, recurrence, overdue)
 5. ✅ Reminders: AlarmManager, receivers, WorkManager, permissions, dedup
-6. Journal: editor, tags, moods, search/filter, calendar view
+6. ✅ Journal: editor, tags, moods, search/filter, calendar view
 7. Expenses: categories, transactions, budgets + warnings, CSV export
 8. Reports & charts; live dashboard
 9. Settings completion, clear-all-data

@@ -53,9 +53,13 @@ class MainActivityTest {
 
     @Test
     fun bottomNav_switchesBetweenTopLevelScreens() {
+        navItem("Expenses").performClick()
+        navItem("Expenses").assertIsSelected()
+        composeRule.onNodeWithText("Not available yet").assertIsDisplayed()
+
         navItem("Journal").performClick()
         navItem("Journal").assertIsSelected()
-        composeRule.onNodeWithText("Not available yet").assertIsDisplayed()
+        composeRule.onNodeWithText("New entry", useUnmergedTree = true).assertIsDisplayed()
 
         navItem("Tasks").performClick()
         navItem("Tasks").assertIsSelected()
