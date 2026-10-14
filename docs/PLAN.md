@@ -151,7 +151,7 @@ Each milestone: build, run relevant tests, report what actually ran.
 9. ✅ Settings completion, clear-all-data
 10. ✅ Backup & restore (format: docs/BACKUP_FORMAT.md)
 11. ✅ Test pass (unit, DAO, migration, Compose UI), lint clean, monkey stress test, defect fixes
-12. Release build, signing, install instructions
+12. ✅ Release build (R8, signed), install instructions
 
 **Deferred beyond MVP:** database encryption, app lock/biometrics, home-screen
 widgets, attachments, cloud sync.
