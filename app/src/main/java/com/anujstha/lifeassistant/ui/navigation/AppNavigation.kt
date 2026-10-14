@@ -19,7 +19,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.anujstha.lifeassistant.ui.dashboard.HomeActions
 import com.anujstha.lifeassistant.ui.dashboard.HomeScreen
+import com.anujstha.lifeassistant.ui.reports.ReportsScreen
 import com.anujstha.lifeassistant.ui.expenses.BudgetsScreen
 import com.anujstha.lifeassistant.ui.expenses.CategoriesScreen
 import com.anujstha.lifeassistant.ui.expenses.ExpensesScreen
@@ -75,7 +77,24 @@ fun AppNavigation(
         },
     ) {
         NavHost(navController = navController, startDestination = HomeRoute) {
-            composable<HomeRoute> { HomeScreen(onOpenReminders = { navController.navigate(RemindersRoute) }) }
+            composable<HomeRoute> {
+                HomeScreen(
+                    HomeActions(
+                        addEntry = { navController.navigate(JournalEditRoute()) },
+                        addExpense = { navController.navigate(TransactionEditRoute()) },
+                        addTask = { navController.navigate(TaskEditRoute()) },
+                        addReminder = { navController.navigate(ReminderEditRoute()) },
+                        openTask = { navController.navigate(TaskEditRoute(it)) },
+                        openTasks = { navController.navigateToTopLevel(TopLevelDestination.TASKS) },
+                        openReminders = { navController.navigate(RemindersRoute) },
+                        openEntry = { navController.navigate(JournalEntryRoute(it)) },
+                        openJournal = { navController.navigateToTopLevel(TopLevelDestination.JOURNAL) },
+                        openExpenses = { navController.navigateToTopLevel(TopLevelDestination.EXPENSES) },
+                        openReports = { navController.navigate(ReportsRoute) },
+                    ),
+                )
+            }
+            composable<ReportsRoute> { ReportsScreen(onBack = { navController.popBackStack() }) }
             composable<JournalRoute> {
                 JournalScreen(
                     onOpenEntry = { navController.navigate(JournalEntryRoute(it)) },
@@ -95,6 +114,7 @@ fun AppNavigation(
                     onNewTransaction = { navController.navigate(TransactionEditRoute()) },
                     onOpenCategories = { navController.navigate(ExpenseCategoriesRoute) },
                     onOpenBudgets = { navController.navigate(BudgetsRoute) },
+                    onOpenReports = { navController.navigate(ReportsRoute) },
                 )
             }
             composable<TransactionEditRoute> { TransactionEditScreen(onDone = { navController.popBackStack() }) }

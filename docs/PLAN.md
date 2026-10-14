@@ -147,7 +147,7 @@ Each milestone: build, run relevant tests, report what actually ran.
 5. ✅ Reminders: AlarmManager, receivers, WorkManager, permissions, dedup
 6. ✅ Journal: editor, tags, moods, search/filter, calendar view
 7. ✅ Expenses: categories, transactions, budgets + warnings, CSV export
-8. Reports & charts; live dashboard
+8. ✅ Reports & charts; live dashboard
 9. Settings completion, clear-all-data
 10. Backup & restore
 11. Test pass (unit, DAO, migration, Compose UI), defect fixes

@@ -4,6 +4,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -44,7 +45,7 @@ class ReminderFlowTest {
             repo.save(null, ReminderInput(title, startAt = LocalDateTime.now().plusDays(1), zoneId = "Asia/Kathmandu"))
         }
         composeRule.waitUntilAtLeastOneExists(hasText("Today"), timeoutMillis = 5_000)
-        composeRule.onNodeWithText("Reminders").performClick()
+        composeRule.onNodeWithContentDescription("Reminders").performClick()
 
         composeRule.waitUntilAtLeastOneExists(hasText(title), timeoutMillis = 5_000)
         composeRule.onNodeWithText("New reminder", useUnmergedTree = true).assertIsDisplayed()

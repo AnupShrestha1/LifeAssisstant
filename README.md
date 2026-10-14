@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 7 of 12 — all five modules work: tasks, reminders with real notifications, journal, and the expense/income tracker with budgets and CSV export. Next: reports and the live dashboard.
+Milestone 8 of 12 — all modules plus the live Home dashboard and Reports (category breakdown, 6-month trend, task and journal counts). Next: settings completion, backup and restore.
 
 ## Requirements
 

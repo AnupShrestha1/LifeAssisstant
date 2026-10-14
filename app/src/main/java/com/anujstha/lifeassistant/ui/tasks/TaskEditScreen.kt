@@ -216,7 +216,7 @@ fun TaskEditScreen(
 
     when (dialog) {
         PickerDialog.DUE_DATE -> DatePickerModal(
-            initial = state.dueDate,
+            initial = state.dueDate ?: LocalDate.now(), // start on today rather than nothing selected
             onConfirm = { viewModel.setDueDate(it); dialog = null },
             onDismiss = { dialog = null },
         )

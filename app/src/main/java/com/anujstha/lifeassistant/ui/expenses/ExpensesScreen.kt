@@ -70,6 +70,7 @@ fun ExpensesScreen(
     onNewTransaction: () -> Unit,
     onOpenCategories: () -> Unit,
     onOpenBudgets: () -> Unit,
+    onOpenReports: () -> Unit,
     viewModel: ExpensesViewModel = viewModel(factory = ExpensesViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -114,6 +115,7 @@ fun ExpensesScreen(
                     Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.expenses_menu))
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                    DropdownMenuItem(text = { Text(stringResource(R.string.reports_title)) }, onClick = { menuOpen = false; onOpenReports() })
                     DropdownMenuItem(text = { Text(stringResource(R.string.expenses_budgets)) }, onClick = { menuOpen = false; onOpenBudgets() })
                     DropdownMenuItem(text = { Text(stringResource(R.string.expenses_categories)) }, onClick = { menuOpen = false; onOpenCategories() })
                     DropdownMenuItem(

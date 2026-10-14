@@ -39,6 +39,8 @@ import kotlin.reflect.KClass
 
 @Serializable data object BudgetsRoute
 
+@Serializable data object ReportsRoute
+
 /** Reminder list + fired-reminder inbox (reached from Home, task editor, and notifications). */
 @Serializable data object RemindersRoute
 

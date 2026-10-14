@@ -10,7 +10,40 @@
 
     <!-- Home -->
     <string name="home_today">Today</string>
-    <string name="home_dashboard_pending">Your tasks, reminders, journal entries and spending for today will appear here once those modules are built (milestone 8).</string>
+    <string name="home_quick_add">Quick add</string>
+    <string name="home_add_entry">Journal entry</string>
+    <string name="home_add_expense">Expense</string>
+    <string name="home_add_task">Task</string>
+    <string name="home_add_reminder">Reminder</string>
+    <string name="home_tasks_today">Tasks today</string>
+    <string name="home_tasks_counts">%1$d done · %2$d pending</string>
+    <string name="home_tasks_none_today">Nothing due today.</string>
+    <string name="home_overdue">Overdue</string>
+    <string name="home_upcoming_reminders">Upcoming reminders</string>
+    <string name="home_no_reminders">No upcoming reminders.</string>
+    <string name="home_money">Money this month</string>
+    <string name="home_spent_today">Spent today</string>
+    <string name="home_budget_left">Budget left</string>
+    <string name="home_no_budget">No budget</string>
+    <string name="home_recent_journal">Recent journal entries</string>
+    <string name="home_no_journal">No journal entries yet.</string>
+    <string name="home_see_all">See all</string>
+    <string name="home_reports">Reports</string>
+
+    <!-- Reports -->
+    <string name="reports_title">Reports</string>
+    <string name="reports_spending_by_category">Spending by category</string>
+    <string name="reports_no_spending">No expenses recorded this month.</string>
+    <string name="reports_trend">Income and expenses, last 6 months</string>
+    <string name="reports_trend_desc">Bar chart of monthly income and expenses for the last six months. The same figures are listed below the chart.</string>
+    <string name="reports_breakdown_desc">Donut chart of this month\'s spending by category. The same figures are listed next to it.</string>
+    <string name="reports_tasks">Tasks</string>
+    <string name="reports_tasks_completed">Completed this month: %1$d</string>
+    <string name="reports_tasks_created">Created this month: %1$d</string>
+    <string name="reports_journal">Journal</string>
+    <string name="reports_journal_entries">Entries this month: %1$d</string>
+    <string name="reports_moods">Moods recorded (counts only)</string>
+    <string name="reports_no_moods">No moods recorded this month.</string>
 
 
     <!-- Settings -->
