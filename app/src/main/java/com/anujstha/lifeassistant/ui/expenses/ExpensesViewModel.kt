@@ -1,17 +1,15 @@
 package com.anujstha.lifeassistant.ui.expenses
 
-import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.anujstha.lifeassistant.appContainer
 import com.anujstha.lifeassistant.data.entity.ExpenseCategoryEntity
 import com.anujstha.lifeassistant.data.entity.TransactionEntity
-import com.anujstha.lifeassistant.data.export.TransactionCsv
+import com.anujstha.lifeassistant.data.export.TransactionExporter
 import com.anujstha.lifeassistant.data.preferences.SettingsRepository
 import com.anujstha.lifeassistant.data.repository.BudgetRepository
 import com.anujstha.lifeassistant.data.repository.ExpenseCategoryRepository
@@ -22,7 +20,6 @@ import com.anujstha.lifeassistant.domain.model.TransactionType
 import com.anujstha.lifeassistant.domain.usecase.BudgetStatus
 import com.anujstha.lifeassistant.domain.usecase.FinanceRules
 import com.anujstha.lifeassistant.util.currentDateFlow
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -31,14 +28,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.Clock
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -97,7 +92,7 @@ class ExpensesViewModel(
     budgets: BudgetRepository,
     settingsRepository: SettingsRepository,
     clock: Clock,
-    private val contentResolver: ContentResolver,
+    private val exporter: TransactionExporter,
     private val firstDayOfWeek: DayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek,
 ) : ViewModel() {
 
@@ -190,15 +185,7 @@ class ExpensesViewModel(
     /** Writes every transaction to [uri] (a document the user picked via the system file picker). */
     fun exportCsv(uri: Uri) {
         viewModelScope.launch {
-            val result = runCatching {
-                withContext(Dispatchers.IO) {
-                    val all = transactions.observeFiltered().first()
-                    val cats = categories.observeAll().first()
-                    val stream = contentResolver.openOutputStream(uri, "wt") ?: error("Cannot open file")
-                    stream.bufferedWriter(Charsets.UTF_8).use { TransactionCsv.write(it, all, cats) }
-                    all.size
-                }
-            }
+            val result = runCatching { exporter.export(uri) }
             messageChannel.send(result.fold({ ExpensesMessage.Exported(it) }, { ExpensesMessage.ExportFailed }))
         }
     }
@@ -209,7 +196,7 @@ class ExpensesViewModel(
                 val c = appContainer()
                 ExpensesViewModel(
                     c.transactionRepository, c.expenseCategoryRepository, c.budgetRepository,
-                    c.settingsRepository, c.clock, checkNotNull(this[APPLICATION_KEY]).contentResolver,
+                    c.settingsRepository, c.clock, c.transactionExporter,
                 )
             }
         }

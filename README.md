@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 8 of 12 — all modules plus the live Home dashboard and Reports (category breakdown, 6-month trend, task and journal counts). Next: settings completion, backup and restore.
+Milestone 9 of 12 — all modules, dashboard, reports and full settings (notification status, categories, CSV export, clear all data, about & privacy). Next: backup and restore.
 
 ## Requirements
 
@@ -54,5 +54,8 @@ Then:
 
 - No internet permission; nothing is transmitted off the device.
 - Android cloud auto-backup is disabled for this app's data.
-- The local database is not encrypted. Uninstalling the app deletes all data —
-  use the in-app export (coming in a later milestone) to keep your own backups.
+- The local database is not separately encrypted; it relies on Android's app sandbox and
+  device encryption (use a screen lock).
+- Uninstalling the app deletes all of its data. Nothing is stored online, so a lost or reset
+  phone can only be restored from backups you exported yourself.
+- Settings → Your data → Clear all data deletes everything after typed confirmation.

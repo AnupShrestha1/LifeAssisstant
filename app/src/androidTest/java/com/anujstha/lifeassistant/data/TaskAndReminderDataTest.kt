@@ -129,6 +129,14 @@ class TaskAndReminderDataTest {
     }
 
     @Test
+    fun renameTaskCategory_rejectsDuplicates() = runTest {
+        val a = tasks.createCategory("Garden")
+        tasks.renameCategory(a.id, "Yard")
+        assertEquals("Yard", db.taskCategoryDao().get(a.id)!!.name)
+        assertThrows(ValidationException::class.java) { runBlocking { tasks.renameCategory(a.id, "work") } } // default "Work"
+    }
+
+    @Test
     fun deletingTaskCategory_keepsTasksUncategorized() = runTest {
         val category = tasks.createCategory("Garden")
         val id = tasks.save(null, TaskInput("Mow", categoryId = category.id))

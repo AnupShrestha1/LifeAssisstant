@@ -146,6 +146,16 @@ class TaskRepository(
             .also { categoryDao.insert(it) }
     }
 
+    suspend fun renameCategory(id: String, name: String) = db.withTransaction {
+        val category = categoryDao.get(id) ?: throw NoSuchElementException("Category not found")
+        val clean = name.trim().replace(Regex("\\s+"), " ")
+        validate(clean.isNotEmpty()) { "Category name can't be empty" }
+        validate(clean.length <= ExpenseCategoryRepository.MAX_NAME) { "Category name is too long" }
+        val clash = categoryDao.findByName(clean)
+        validate(clash == null || clash.id == id) { "A category named \"$clean\" already exists" }
+        categoryDao.update(category.copy(name = clean, updatedAt = clock.instant()))
+    }
+
     /** Tasks in the category are kept and become uncategorized. */
     suspend fun deleteCategory(id: String): Boolean = categoryDao.delete(id) > 0
 

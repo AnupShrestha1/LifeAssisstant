@@ -50,6 +50,11 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it[Keys.TIME_FORMAT] = format.name }
     }
 
+    /** Back to defaults (theme, NPR, Asia/Kathmandu, system time format). */
+    suspend fun resetAll() {
+        dataStore.edit { it.clear() }
+    }
+
     private fun Preferences.toUserSettings() = UserSettings(
         themeMode = enumOrDefault(this[Keys.THEME_MODE], ThemeMode.SYSTEM),
         currencyCode = this[Keys.CURRENCY]?.takeIf(::isValidCurrency) ?: UserSettings.DEFAULT_CURRENCY,

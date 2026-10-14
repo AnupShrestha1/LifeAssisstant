@@ -77,6 +77,8 @@ class ReminderNotifier(private val context: Context) {
 
     fun cancel(notificationId: Int) = NotificationManagerCompat.from(context).cancel(notificationId)
 
+    fun cancelAll() = NotificationManagerCompat.from(context).cancelAll()
+
     private fun openRemindersIntent(requestCode: Int): PendingIntent = PendingIntent.getActivity(
         context,
         requestCode,

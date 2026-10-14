@@ -2,9 +2,11 @@ package com.anujstha.lifeassistant
 
 import android.content.Context
 import com.anujstha.lifeassistant.data.database.AppDatabase
+import com.anujstha.lifeassistant.data.export.TransactionExporter
 import com.anujstha.lifeassistant.data.preferences.SettingsRepository
 import com.anujstha.lifeassistant.data.preferences.settingsDataStore
 import com.anujstha.lifeassistant.data.repository.BudgetRepository
+import com.anujstha.lifeassistant.data.repository.DataResetter
 import com.anujstha.lifeassistant.data.repository.ExpenseCategoryRepository
 import com.anujstha.lifeassistant.data.repository.JournalRepository
 import com.anujstha.lifeassistant.data.repository.ReminderRepository
@@ -40,4 +42,10 @@ class AppContainer(context: Context) {
     val reminderNotifier by lazy { ReminderNotifier(appContext) }
     val reminderRepository by lazy { ReminderRepository(database, reminderScheduler, clock, ids) }
     val taskRepository by lazy { TaskRepository(database, reminderScheduler, clock, ids) }
+    val transactionExporter by lazy {
+        TransactionExporter(transactionRepository, expenseCategoryRepository, appContext.contentResolver)
+    }
+    val dataResetter by lazy {
+        DataResetter(database, reminderScheduler, reminderNotifier::cancelAll, settingsRepository, clock, ids)
+    }
 }
