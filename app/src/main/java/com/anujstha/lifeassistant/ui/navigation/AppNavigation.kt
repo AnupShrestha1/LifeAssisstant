@@ -2,7 +2,10 @@ package com.anujstha.lifeassistant.ui.navigation
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
@@ -19,6 +22,8 @@ import com.anujstha.lifeassistant.R
 import com.anujstha.lifeassistant.ui.components.NotBuiltYetScreen
 import com.anujstha.lifeassistant.ui.dashboard.HomeScreen
 import com.anujstha.lifeassistant.ui.settings.SettingsScreen
+import com.anujstha.lifeassistant.ui.tasks.TaskEditScreen
+import com.anujstha.lifeassistant.ui.tasks.TasksScreen
 
 /**
  * App shell: adaptive navigation (bottom bar on phones, rail on wider screens) around the NavHost.
@@ -27,8 +32,12 @@ import com.anujstha.lifeassistant.ui.settings.SettingsScreen
 fun AppNavigation(navController: NavHostController = rememberNavController()) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
+    // Detail screens (editors) take the full screen; the navigation bar shows on top-level screens only.
+    val onTopLevel = currentDestination == null || TopLevelDestination.entries.any { currentDestination.isOn(it) }
+    val adaptiveLayout = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(currentWindowAdaptiveInfo())
 
     NavigationSuiteScaffold(
+        layoutType = if (onTopLevel) adaptiveLayout else NavigationSuiteType.None,
         navigationSuiteItems = {
             TopLevelDestination.entries.forEach { destination ->
                 val selected = currentDestination.isOn(destination)
@@ -50,7 +59,13 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
             composable<HomeRoute> { HomeScreen() }
             composable<JournalRoute> { NotBuiltYetScreen(R.string.nav_journal, milestone = 6) }
             composable<ExpensesRoute> { NotBuiltYetScreen(R.string.nav_expenses, milestone = 7) }
-            composable<TasksRoute> { NotBuiltYetScreen(R.string.nav_tasks, milestone = 4) }
+            composable<TasksRoute> {
+                TasksScreen(
+                    onOpenTask = { navController.navigate(TaskEditRoute(it)) },
+                    onNewTask = { navController.navigate(TaskEditRoute()) },
+                )
+            }
+            composable<TaskEditRoute> { TaskEditScreen(onDone = { navController.popBackStack() }) }
             composable<SettingsRoute> { SettingsScreen() }
         }
     }

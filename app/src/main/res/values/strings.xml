@@ -37,7 +37,89 @@
     <string name="time_format_12h">12-hour</string>
     <string name="time_format_24h">24-hour</string>
 
+
+    <!-- Dates -->
+    <string name="date_today">Today</string>
+    <string name="date_tomorrow">Tomorrow</string>
+    <string name="date_yesterday">Yesterday</string>
+
+    <!-- Tasks: list -->
+    <string name="tasks_view_today">Today</string>
+    <string name="tasks_view_upcoming">Upcoming</string>
+    <string name="tasks_view_overdue">Overdue</string>
+    <string name="tasks_view_all">All</string>
+    <string name="tasks_view_completed">Completed</string>
+    <string name="tasks_new">New task</string>
+    <string name="tasks_search_hint">Search tasks</string>
+    <string name="tasks_sort">Sort</string>
+    <string name="tasks_sort_due">Due date</string>
+    <string name="tasks_sort_priority">Priority</string>
+    <string name="tasks_sort_created">Date created</string>
+    <string name="tasks_filter_priority">Priority</string>
+    <string name="tasks_filter_category">Category</string>
+    <string name="tasks_filter_status">Status</string>
+    <string name="filter_any">Any</string>
+    <string name="tasks_overdue_label">Overdue · %1$s</string>
+    <string name="tasks_repeats">Repeats</string>
+    <string name="tasks_next_created">Next occurrence added for %1$s</string>
+    <string name="tasks_empty_today">Nothing due today.</string>
+    <string name="tasks_empty_upcoming">No upcoming tasks with a due date.</string>
+    <string name="tasks_empty_overdue">Nothing overdue.</string>
+    <string name="tasks_empty_all">No tasks yet. Tap \"New task\" to add one.</string>
+    <string name="tasks_empty_completed">No completed tasks yet.</string>
+    <string name="tasks_empty_filtered">No tasks match the current search or filters.</string>
+
+    <!-- Tasks: editor -->
+    <string name="task_edit_title_new">New task</string>
+    <string name="task_edit_title_edit">Edit task</string>
+    <string name="task_field_title">Title</string>
+    <string name="task_field_description">Description (optional)</string>
+    <string name="task_field_priority">Priority</string>
+    <string name="task_field_status">Status</string>
+    <string name="task_field_category">Category</string>
+    <string name="task_field_due_date">Due date</string>
+    <string name="task_field_due_time">Due time</string>
+    <string name="task_no_due_date">No due date</string>
+    <string name="task_no_due_time">No time</string>
+    <string name="task_remove_time">Remove time</string>
+    <string name="task_field_repeat">Repeat</string>
+    <string name="task_field_repeat_every">Every</string>
+    <string name="task_field_repeat_until">Ends</string>
+    <string name="task_repeat_never_ends">Never</string>
+    <string name="task_category_none">None</string>
+    <string name="task_category_new">New category…</string>
+    <string name="task_category_name">Category name</string>
+    <string name="task_series_note">This task repeats. Completing or cancelling it adds the next occurrence. Changing the due date or repeat pattern starts a new series from this task; earlier occurrences are kept as history.</string>
+    <string name="task_delete_title">Delete task?</string>
+    <string name="task_delete_body">This deletes this task and its reminders. It can\'t be undone.</string>
+    <string name="task_delete_body_recurring">This deletes only this occurrence and its reminders. Other occurrences in the series are kept. It can\'t be undone.</string>
+    <string name="clear">Clear</string>
+
+    <string name="status_pending">Pending</string>
+    <string name="status_in_progress">In progress</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
+    <string name="priority_urgent">Urgent</string>
+    <string name="repeat_none">Does not repeat</string>
+    <string name="repeat_daily">Daily</string>
+    <string name="repeat_weekly">Weekly</string>
+    <string name="repeat_monthly">Monthly</string>
+    <plurals name="repeat_unit_days"><item quantity="one">day</item><item quantity="other">days</item></plurals>
+    <plurals name="repeat_unit_weeks"><item quantity="one">week</item><item quantity="other">weeks</item></plurals>
+    <plurals name="repeat_unit_months"><item quantity="one">month</item><item quantity="other">months</item></plurals>
+
+
     <!-- Common -->
+    <string name="action_ok">OK</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_back">Back</string>
+    <string name="action_search">Search</string>
+    <string name="action_close_search">Close search</string>
+    <string name="action_create">Create</string>
     <string name="action_cancel">Cancel</string>
     <string name="search">Search</string>
     <string name="no_matches">No matches</string>

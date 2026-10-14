@@ -100,10 +100,14 @@ com.anujstha.lifeassistant
 
 ## 5. Recurring tasks
 
-Completing a recurring task inserts the next occurrence as a new row sharing
-`seriesId`; the completed row stays as history. The unique
-(seriesId, occurrenceDate) index + `INSERT OR IGNORE` prevents double generation.
-Generation stops after the end date. Cancelled ≠ completed.
+Completing **or cancelling** (= skipping) an open occurrence inserts the next
+occurrence as a new row sharing `seriesId`; the closed row stays as history. The
+unique (seriesId, occurrenceDate) index + `INSERT OR IGNORE` prevents double
+generation, so reopening and re-completing never duplicates. Dates are computed
+from `seriesStartDate`, so monthly series don't drift (Jan 31 → Feb 28 → Mar 31).
+Generation stops after the end date. Changing an occurrence's due date or repeat
+pattern starts a new series from it. Cancelled ≠ completed. Deleting a task
+deletes only that occurrence.
 
 ## 6. Privacy
 
@@ -134,7 +138,7 @@ Each milestone: build, run relevant tests, report what actually ran.
 1. ✅ Project setup, Material 3 theme (light/dark/system), adaptive icon, privacy manifest
 2. ✅ Navigation shell + DataStore settings (theme, currency, time zone, time format)
 3. ✅ Room database, entities, DAOs, repositories, `Clock`; DAO tests
-4. Task manager (CRUD, filters, sort, recurrence, overdue)
+4. ✅ Task manager (CRUD, filters, sort, recurrence, overdue)
 5. Reminders: AlarmManager, receivers, WorkManager, permissions, dedup
 6. Journal: editor, tags, moods, search/filter, calendar view
 7. Expenses: categories, transactions, budgets + warnings, CSV export

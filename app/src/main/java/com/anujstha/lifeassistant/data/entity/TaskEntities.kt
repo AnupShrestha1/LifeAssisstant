@@ -29,6 +29,7 @@ data class TaskCategoryEntity(
  * A task. Recurring tasks form a series: every occurrence is its own row sharing [seriesId],
  * with [occurrenceDate] identifying which occurrence it is. The unique (seriesId, occurrenceDate)
  * index guarantees an occurrence is never generated twice; completed rows remain as history.
+ * [seriesStartDate] anchors date arithmetic so monthly series don't drift (see Recurrence).
  */
 @Entity(
     tableName = "tasks",
@@ -58,6 +59,7 @@ data class TaskEntity(
     val categoryId: String?,
     val completedAt: Instant?,
     val seriesId: String?,
+    val seriesStartDate: LocalDate?,
     val occurrenceDate: LocalDate?,
     @Embedded(prefix = "recurrence_") val recurrence: RecurrenceRule?,
     val createdAt: Instant,

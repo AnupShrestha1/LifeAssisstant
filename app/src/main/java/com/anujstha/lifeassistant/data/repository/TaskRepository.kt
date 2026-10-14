@@ -8,7 +8,9 @@ import com.anujstha.lifeassistant.domain.model.Priority
 import com.anujstha.lifeassistant.domain.model.RecurrenceRule
 import com.anujstha.lifeassistant.domain.model.TaskStatus
 import com.anujstha.lifeassistant.domain.model.validate
+import com.anujstha.lifeassistant.domain.usecase.Recurrence
 import com.anujstha.lifeassistant.util.IdGenerator
+import com.anujstha.lifeassistant.util.escapeLike
 import kotlinx.coroutines.flow.Flow
 import java.time.Clock
 import java.time.LocalDate
@@ -26,8 +28,13 @@ data class TaskInput(
 )
 
 /**
- * Task persistence and validation. Status transitions and recurring-occurrence generation
- * are added with the task manager (milestone 4).
+ * Task persistence, validation and status rules.
+ *
+ * Recurring tasks: each occurrence is a row. When an open occurrence is completed **or cancelled**
+ * (cancel = skip this one), the next occurrence is generated — once, guarded by the unique
+ * (seriesId, occurrenceDate) index. Reopening a closed occurrence never deletes or duplicates the
+ * next one. Changing an occurrence's due date or repeat pattern starts a new series from it, so
+ * earlier occurrences stay untouched as history.
  */
 class TaskRepository(
     private val db: AppDatabase,
@@ -39,11 +46,24 @@ class TaskRepository(
 
     fun observe(id: String): Flow<TaskEntity?> = dao.observe(id)
 
+    /** All tasks matching the search / filters, any status. Views and sorting are applied by callers. */
+    fun observeTasks(query: String? = null, priority: Priority? = null, categoryId: String? = null): Flow<List<TaskEntity>> =
+        dao.observeFiltered(
+            statuses = TaskStatus.entries,
+            priority = priority,
+            categoryId = categoryId,
+            dueFrom = null,
+            dueTo = null,
+            query = query?.trim()?.takeIf { it.isNotEmpty() }?.let(::escapeLike),
+        )
+
     fun observeCategories(): Flow<List<TaskCategoryEntity>> = categoryDao.observeActive()
 
+    fun observeAllCategories(): Flow<List<TaskCategoryEntity>> = categoryDao.observeAll()
+
     /**
-     * Creates ([id] == null) or updates a task, keeping createdAt on update.
-     * completedAt is set when the task becomes COMPLETED and cleared when it is reopened.
+     * Creates ([id] == null) or updates a task, keeping createdAt on update. completedAt is set
+     * when the task becomes COMPLETED and cleared when it is reopened. Returns the task id.
      */
     suspend fun save(id: String?, input: TaskInput): String = db.withTransaction {
         val title = input.title.trim()
@@ -64,13 +84,7 @@ class TaskRepository(
 
         val existing = id?.let { dao.get(it) ?: throw NoSuchElementException("Task not found") }
         val now = clock.instant()
-        val completedAt = when {
-            input.status != TaskStatus.COMPLETED -> null
-            existing?.status == TaskStatus.COMPLETED -> existing.completedAt
-            else -> now
-        }
-        // A recurring task starts a series; its first occurrence is its own due date.
-        val seriesId = existing?.seriesId ?: if (input.recurrence != null) ids.newId() else null
+        val series = seriesFieldsFor(existing, input)
         val entity = TaskEntity(
             id = existing?.id ?: ids.newId(),
             title = title,
@@ -80,18 +94,36 @@ class TaskRepository(
             dueDate = input.dueDate,
             dueTime = input.dueTime,
             categoryId = input.categoryId,
-            completedAt = completedAt,
-            seriesId = seriesId,
-            occurrenceDate = if (seriesId != null) existing?.occurrenceDate ?: input.dueDate else null,
+            completedAt = completedAtFor(existing, input.status),
+            seriesId = series.seriesId,
+            seriesStartDate = series.startDate,
+            occurrenceDate = series.occurrenceDate,
             recurrence = input.recurrence,
             createdAt = existing?.createdAt ?: now,
             updatedAt = now,
         )
         dao.upsert(entity)
+        if (existing != null && existing.status.isOpen && !entity.status.isOpen) generateNextOccurrence(entity)
         entity.id
     }
 
-    /** Deletes the task and (by cascade) its reminders. Alarm cancellation is wired in milestone 5. */
+    /**
+     * Changes only the status (list checkbox, "mark in progress", reopen...). Returns the next
+     * occurrence if closing a recurring task generated one, otherwise null.
+     */
+    suspend fun setStatus(id: String, status: TaskStatus): TaskEntity? = db.withTransaction {
+        val task = dao.get(id) ?: throw NoSuchElementException("Task not found")
+        if (task.status == status) return@withTransaction null
+        val updated = task.copy(
+            status = status,
+            completedAt = completedAtFor(task, status),
+            updatedAt = clock.instant(),
+        )
+        dao.upsert(updated)
+        if (task.status.isOpen && !status.isOpen) generateNextOccurrence(updated) else null
+    }
+
+    /** Deletes this task (one occurrence of a series) and, by cascade, its reminders. */
     suspend fun delete(id: String): Boolean = dao.delete(id) > 0
 
     suspend fun createCategory(name: String): TaskCategoryEntity = db.withTransaction {
@@ -111,6 +143,50 @@ class TaskRepository(
 
     /** Tasks in the category are kept and become uncategorized. */
     suspend fun deleteCategory(id: String): Boolean = categoryDao.delete(id) > 0
+
+    private fun completedAtFor(existing: TaskEntity?, newStatus: TaskStatus) = when {
+        newStatus != TaskStatus.COMPLETED -> null
+        existing?.status == TaskStatus.COMPLETED -> existing.completedAt
+        else -> clock.instant()
+    }
+
+    private data class SeriesFields(val seriesId: String?, val startDate: LocalDate?, val occurrenceDate: LocalDate?)
+
+    private fun seriesFieldsFor(existing: TaskEntity?, input: TaskInput): SeriesFields {
+        val rule = input.recurrence ?: return SeriesFields(null, null, null)
+        val keepSeries = existing?.seriesId != null &&
+            existing.dueDate == input.dueDate &&
+            existing.recurrence?.frequency == rule.frequency &&
+            existing.recurrence.interval == rule.interval
+        return if (keepSeries) {
+            SeriesFields(existing!!.seriesId, existing.seriesStartDate, existing.occurrenceDate)
+        } else {
+            // New series anchored at this task's due date (only end-date edits keep the old series).
+            SeriesFields(ids.newId(), input.dueDate, input.dueDate)
+        }
+    }
+
+    /** Inserts the occurrence after [closed]; returns it, or null if the series ended or it already exists. */
+    private suspend fun generateNextOccurrence(closed: TaskEntity): TaskEntity? {
+        val rule = closed.recurrence ?: return null
+        val seriesId = closed.seriesId ?: return null
+        val occurrence = closed.occurrenceDate ?: return null
+        val start = closed.seriesStartDate ?: occurrence
+        val nextDate = Recurrence.nextAfter(start, rule, occurrence) ?: return null
+        val now = clock.instant()
+        val next = closed.copy(
+            id = ids.newId(),
+            status = TaskStatus.PENDING,
+            completedAt = null,
+            dueDate = nextDate,
+            seriesId = seriesId,
+            seriesStartDate = start,
+            occurrenceDate = nextDate,
+            createdAt = now,
+            updatedAt = now,
+        )
+        return if (dao.insertIfAbsent(next) > 0) next else null
+    }
 
     companion object {
         const val MAX_TITLE = 200

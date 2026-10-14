@@ -23,6 +23,9 @@ import kotlin.reflect.KClass
 @Serializable data object TasksRoute
 @Serializable data object SettingsRoute
 
+/** Task editor; [taskId] null creates a new task. */
+@Serializable data class TaskEditRoute(val taskId: String? = null)
+
 /** The primary destinations shown in the bottom bar / navigation rail. */
 enum class TopLevelDestination(
     val route: Any,
