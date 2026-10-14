@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 4 of 12 — navigation, settings, database layer, and the task manager (create/edit/complete, filters, sorting, search, recurring tasks, overdue). Journal, expenses and reminders are not built yet.
+Milestone 5 of 12 — navigation, settings, database layer, task manager, and reminders with real Android notifications. Journal and expenses are not built yet.
 
 ## Requirements
 
@@ -35,6 +35,20 @@ Then:
 ./gradlew connectedDebugAndroidTest   # instrumented/Compose UI tests (device or emulator required)
 ./gradlew installDebug           # install on a connected device
 ```
+
+## Reminders and notifications
+
+- Reminders use Android's `AlarmManager`. With **Alarms & reminders** permission (Android 12+,
+  Settings → Apps → Life Assistant) they fire on time; without it Android may delay them by
+  a few minutes. The app shows a banner explaining this.
+- On Android 13+ the app asks for notification permission when you save a reminder. If you
+  decline, fired reminders still appear on the in-app Reminders screen.
+- Alarms are re-registered after reboot, app update, clock or time-zone changes, and each
+  time the app starts. Reminders that came due while the phone was off are shown once as
+  "missed".
+- Exact delivery is **not guaranteed** on every device: some manufacturers' battery savers
+  can still delay or block alarms. If reminders are late, exclude the app from battery
+  optimization in system settings.
 
 ## Privacy
 

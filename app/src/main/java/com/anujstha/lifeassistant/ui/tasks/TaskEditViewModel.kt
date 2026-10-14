@@ -9,7 +9,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.toRoute
 import com.anujstha.lifeassistant.appContainer
+import com.anujstha.lifeassistant.data.entity.ReminderEntity
 import com.anujstha.lifeassistant.data.entity.TaskCategoryEntity
+import com.anujstha.lifeassistant.data.repository.ReminderRepository
 import com.anujstha.lifeassistant.data.repository.TaskInput
 import com.anujstha.lifeassistant.data.repository.TaskRepository
 import com.anujstha.lifeassistant.domain.model.Priority
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -54,8 +57,10 @@ data class TaskEditState(
 )
 
 class TaskEditViewModel(
-    private val taskId: String?,
+    /** Null while creating a new task. */
+    val taskId: String?,
     private val repository: TaskRepository,
+    reminderRepository: ReminderRepository,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
@@ -64,6 +69,10 @@ class TaskEditViewModel(
 
     val categories: StateFlow<List<TaskCategoryEntity>> = repository.observeCategories()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    val reminders: StateFlow<List<ReminderEntity>> =
+        (if (taskId != null) reminderRepository.observeForTask(taskId) else flowOf(emptyList()))
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     val timeFormat: StateFlow<TimeFormat> = settingsRepository.settings.map { it.timeFormat }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TimeFormat.SYSTEM)
@@ -172,7 +181,7 @@ class TaskEditViewModel(
             initializer {
                 val handle: SavedStateHandle = createSavedStateHandle()
                 val c = appContainer()
-                TaskEditViewModel(handle.toRoute<TaskEditRoute>().taskId, c.taskRepository, c.settingsRepository)
+                TaskEditViewModel(handle.toRoute<TaskEditRoute>().taskId, c.taskRepository, c.reminderRepository, c.settingsRepository)
             }
         }
     }

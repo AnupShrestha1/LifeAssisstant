@@ -87,9 +87,12 @@ com.anujstha.lifeassistant
 2. **Firing.** `ReminderAlarmReceiver` inserts a `reminder_events` row; a unique-key
    conflict means the occurrence was already handled → no duplicate notification.
    Then posts the notification (if permitted) and schedules the next occurrence.
-3. **WorkManager.** `RescheduleWorker` on `BOOT_COMPLETED`, `MY_PACKAGE_REPLACED`,
-   `TIME_SET`, `TIMEZONE_CHANGED`; a daily periodic worker records missed reminders
-   and catches up recurring tasks.
+3. **WorkManager.** `RescheduleWorker` runs on `BOOT_COMPLETED`, `MY_PACKAGE_REPLACED`,
+   `TIME_SET`, `TIMEZONE_CHANGED`, exact-alarm permission changes, and every app start
+   (force-stop also clears alarms). A 12-hourly periodic run is a safety net for alarms
+   an OEM battery manager dropped. Occurrences already past are recorded as **missed**
+   once per reminder (not once per skipped repeat), then the next future one is scheduled.
+   A stale alarm (reminder edited/disabled since it was set) is ignored.
 4. **Time zones.** A reminder fires at a UTC instant; recurrence is computed in the
    reminder's stored `zoneId` wall-clock, so "08:00 daily" stays 08:00. Changing the
    *display* timezone preference only changes formatting, never trigger instants.
@@ -139,7 +142,7 @@ Each milestone: build, run relevant tests, report what actually ran.
 2. ✅ Navigation shell + DataStore settings (theme, currency, time zone, time format)
 3. ✅ Room database, entities, DAOs, repositories, `Clock`; DAO tests
 4. ✅ Task manager (CRUD, filters, sort, recurrence, overdue)
-5. Reminders: AlarmManager, receivers, WorkManager, permissions, dedup
+5. ✅ Reminders: AlarmManager, receivers, WorkManager, permissions, dedup
 6. Journal: editor, tags, moods, search/filter, calendar view
 7. Expenses: categories, transactions, budgets + warnings, CSV export
 8. Reports & charts; live dashboard

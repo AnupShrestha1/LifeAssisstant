@@ -32,7 +32,7 @@ class TaskStatusTest {
     @Before
     fun setUp() {
         db = inMemoryDatabase(clock, ids)
-        repo = TaskRepository(db, clock, ids)
+        repo = TaskRepository(db, FakeScheduler(), clock, ids)
     }
 
     @After

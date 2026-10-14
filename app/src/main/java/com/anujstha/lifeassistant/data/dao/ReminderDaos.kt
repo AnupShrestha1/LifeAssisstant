@@ -72,6 +72,9 @@ interface ReminderEventDao {
     @Query("UPDATE reminder_events SET dismissedAt = :at WHERE id = :id AND dismissedAt IS NULL")
     suspend fun dismiss(id: String, at: Instant): Int
 
+    @Query("UPDATE reminder_events SET dismissedAt = :at WHERE dismissedAt IS NULL")
+    suspend fun dismissAll(at: Instant): Int
+
     @Query("UPDATE reminder_events SET dismissedAt = :at WHERE reminderId = :reminderId AND dismissedAt IS NULL")
     suspend fun dismissAllForReminder(reminderId: String, at: Instant): Int
 

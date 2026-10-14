@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -35,16 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anujstha.lifeassistant.R
 import com.anujstha.lifeassistant.domain.model.Priority
-import com.anujstha.lifeassistant.domain.model.RecurrenceFrequency
 import com.anujstha.lifeassistant.domain.model.TaskStatus
 import com.anujstha.lifeassistant.domain.model.TimeFormat
 import com.anujstha.lifeassistant.ui.components.Choice
@@ -55,6 +51,10 @@ import com.anujstha.lifeassistant.ui.components.TimePickerModal
 import com.anujstha.lifeassistant.ui.components.rememberDateFormatter
 import com.anujstha.lifeassistant.ui.components.rememberTimeFormatter
 import java.time.LocalDate
+import java.time.ZoneId
+import com.anujstha.lifeassistant.ui.components.RepeatFields
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.foundation.clickable
 
 private const val NEW_CATEGORY = "\u0000new"
 
@@ -64,10 +64,13 @@ private enum class PickerDialog { DUE_DATE, DUE_TIME, REPEAT_END, NEW_CATEGORY, 
 @Composable
 fun TaskEditScreen(
     onDone: () -> Unit,
+    onOpenReminder: (reminderId: String) -> Unit,
+    onAddReminder: (taskId: String) -> Unit,
     viewModel: TaskEditViewModel = viewModel(factory = TaskEditViewModel.Factory),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val reminders by viewModel.reminders.collectAsStateWithLifecycle()
     val timeFormat by viewModel.timeFormat.collectAsStateWithLifecycle()
     var dialog by rememberSaveable { mutableStateOf<PickerDialog?>(null) }
     val dateFormatter = rememberDateFormatter()
@@ -168,7 +171,15 @@ fun TaskEditScreen(
                 }
             }
 
-            RepeatSection(state, viewModel, onPickEnd = { dialog = PickerDialog.REPEAT_END }, dateText = { dateFormatter.format(it) })
+            RepeatFields(
+                frequency = state.frequency,
+                interval = state.interval,
+                repeatEnd = state.repeatEnd,
+                onFrequency = { viewModel.setFrequency(it, LocalDate.now()) },
+                onInterval = viewModel::setInterval,
+                onPickEnd = { dialog = PickerDialog.REPEAT_END },
+                onClearEnd = { viewModel.setRepeatEnd(null) },
+            )
 
             if (state.wasRecurring) {
                 Text(
@@ -176,6 +187,29 @@ fun TaskEditScreen(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+
+            // Reminders belong to a saved task, so the section appears when editing.
+            val taskId = viewModel.taskId
+            if (taskId != null) {
+                FieldLabel(R.string.task_reminders)
+                reminders.forEach { reminder ->
+                    Text(
+                        text = reminder.title + (reminder.nextTriggerAt?.let { at ->
+                            val local = at.atZone(ZoneId.of(reminder.zoneId))
+                            " · ${dateFormatter.format(local)} ${timeFormatter.format(local)}"
+                        } ?: ""),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onOpenReminder(reminder.id) }
+                            .padding(vertical = 8.dp),
+                    )
+                }
+                OutlinedButton(onClick = { onAddReminder(taskId) }) {
+                    Icon(Icons.Filled.NotificationsActive, contentDescription = null)
+                    Text(stringResource(R.string.task_add_reminder), modifier = Modifier.padding(start = 8.dp))
+                }
             }
         }
     }
@@ -219,43 +253,6 @@ fun TaskEditScreen(
             dismissButton = { TextButton(onClick = { dialog = null }) { Text(stringResource(R.string.action_cancel)) } },
         )
         null -> Unit
-    }
-}
-
-@Composable
-private fun RepeatSection(
-    state: TaskEditState,
-    viewModel: TaskEditViewModel,
-    onPickEnd: () -> Unit,
-    dateText: (LocalDate) -> String,
-) {
-    val frequencies: List<RecurrenceFrequency?> = listOf(null) + RecurrenceFrequency.entries
-    DropdownField(
-        label = stringResource(R.string.task_field_repeat),
-        options = frequencies.map { Choice(it, stringResource(it.labelRes())) },
-        selected = state.frequency,
-        onSelect = { viewModel.setFrequency(it, LocalDate.now()) },
-    )
-    val frequency = state.frequency ?: return
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.task_field_repeat_every))
-        OutlinedTextField(
-            value = state.interval,
-            onValueChange = viewModel::setInterval,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.width(80.dp),
-        )
-        Text(pluralStringResource(frequency.unitPluralRes(), state.interval.toIntOrNull() ?: 1))
-    }
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.task_field_repeat_until))
-        OutlinedButton(onClick = onPickEnd) {
-            Text(state.repeatEnd?.let(dateText) ?: stringResource(R.string.task_repeat_never_ends))
-        }
-        if (state.repeatEnd != null) {
-            TextButton(onClick = { viewModel.setRepeatEnd(null) }) { Text(stringResource(R.string.clear)) }
-        }
     }
 }
 

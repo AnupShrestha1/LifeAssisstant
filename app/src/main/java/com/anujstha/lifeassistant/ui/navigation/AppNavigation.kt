@@ -7,6 +7,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
@@ -21,6 +22,8 @@ import androidx.navigation.compose.rememberNavController
 import com.anujstha.lifeassistant.R
 import com.anujstha.lifeassistant.ui.components.NotBuiltYetScreen
 import com.anujstha.lifeassistant.ui.dashboard.HomeScreen
+import com.anujstha.lifeassistant.ui.reminders.ReminderEditScreen
+import com.anujstha.lifeassistant.ui.reminders.RemindersScreen
 import com.anujstha.lifeassistant.ui.settings.SettingsScreen
 import com.anujstha.lifeassistant.ui.tasks.TaskEditScreen
 import com.anujstha.lifeassistant.ui.tasks.TasksScreen
@@ -29,7 +32,18 @@ import com.anujstha.lifeassistant.ui.tasks.TasksScreen
  * App shell: adaptive navigation (bottom bar on phones, rail on wider screens) around the NavHost.
  */
 @Composable
-fun AppNavigation(navController: NavHostController = rememberNavController()) {
+fun AppNavigation(
+    openReminders: Boolean = false,
+    onRemindersOpened: () -> Unit = {},
+    navController: NavHostController = rememberNavController(),
+) {
+    // A tapped reminder notification asks to show the reminders screen.
+    LaunchedEffect(openReminders) {
+        if (openReminders) {
+            navController.navigate(RemindersRoute) { launchSingleTop = true }
+            onRemindersOpened()
+        }
+    }
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     // Detail screens (editors) take the full screen; the navigation bar shows on top-level screens only.
@@ -56,7 +70,7 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         },
     ) {
         NavHost(navController = navController, startDestination = HomeRoute) {
-            composable<HomeRoute> { HomeScreen() }
+            composable<HomeRoute> { HomeScreen(onOpenReminders = { navController.navigate(RemindersRoute) }) }
             composable<JournalRoute> { NotBuiltYetScreen(R.string.nav_journal, milestone = 6) }
             composable<ExpensesRoute> { NotBuiltYetScreen(R.string.nav_expenses, milestone = 7) }
             composable<TasksRoute> {
@@ -65,7 +79,21 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                     onNewTask = { navController.navigate(TaskEditRoute()) },
                 )
             }
-            composable<TaskEditRoute> { TaskEditScreen(onDone = { navController.popBackStack() }) }
+            composable<TaskEditRoute> {
+                TaskEditScreen(
+                    onDone = { navController.popBackStack() },
+                    onOpenReminder = { navController.navigate(ReminderEditRoute(reminderId = it)) },
+                    onAddReminder = { navController.navigate(ReminderEditRoute(taskId = it)) },
+                )
+            }
+            composable<RemindersRoute> {
+                RemindersScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpenReminder = { navController.navigate(ReminderEditRoute(reminderId = it)) },
+                    onNewReminder = { navController.navigate(ReminderEditRoute()) },
+                )
+            }
+            composable<ReminderEditRoute> { ReminderEditScreen(onDone = { navController.popBackStack() }) }
             composable<SettingsRoute> { SettingsScreen() }
         }
     }

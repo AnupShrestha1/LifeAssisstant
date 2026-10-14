@@ -112,6 +112,46 @@
     <plurals name="repeat_unit_months"><item quantity="one">month</item><item quantity="other">months</item></plurals>
 
 
+    <!-- Notifications -->
+    <string name="notif_channel_reminders">Reminders</string>
+    <string name="notif_channel_reminders_desc">Alerts for reminders you set in Life Assistant</string>
+    <string name="notif_missed">Missed · %1$s</string>
+    <string name="notif_action_dismiss">Dismiss</string>
+
+    <!-- Reminders -->
+    <string name="reminders_title">Reminders</string>
+    <string name="reminders_new">New reminder</string>
+    <string name="reminders_fired">Fired</string>
+    <string name="reminders_dismiss_all">Dismiss all</string>
+    <string name="reminders_upcoming">Upcoming</string>
+    <string name="reminders_off">Off or finished</string>
+    <string name="reminders_empty">No reminders yet. Tap \"New reminder\" to add one.</string>
+    <string name="reminders_missed_label">Missed · %1$s</string>
+    <string name="reminders_for_task">Task: %1$s</string>
+    <string name="reminders_enabled">Enabled</string>
+    <string name="reminders_next">Next: %1$s</string>
+    <string name="reminders_notif_off_title">Notifications are off</string>
+    <string name="reminders_notif_off_body">Reminders will still be recorded here, but your phone won\'t alert you. Allow notifications so reminders can alert you when the app is closed.</string>
+    <string name="reminders_notif_allow">Allow notifications</string>
+    <string name="reminders_open_settings">Open settings</string>
+    <string name="reminders_exact_off_title">Reminders may be a few minutes late</string>
+    <string name="reminders_exact_off_body">Android hasn\'t allowed this app to use exact alarms, so it may delay reminders to save battery. Allow \"Alarms &amp; reminders\" for on-time alerts. Battery savers on some phones can still delay alerts.</string>
+    <string name="reminders_exact_allow">Allow exact alarms</string>
+    <string name="reminder_edit_title_new">New reminder</string>
+    <string name="reminder_edit_title_edit">Edit reminder</string>
+    <string name="reminder_field_title">Title</string>
+    <string name="reminder_field_note">Note (optional)</string>
+    <string name="reminder_field_date">Date</string>
+    <string name="reminder_field_time">Time</string>
+    <string name="reminder_zone_note">Time is in %1$s.</string>
+    <string name="reminder_not_now">Not now</string>
+    <string name="reminder_delete_title">Delete reminder?</string>
+    <string name="reminder_delete_body">The reminder and its alerts are removed. This can\'t be undone.</string>
+    <string name="task_reminders">Reminders</string>
+    <string name="task_add_reminder">Add reminder</string>
+    <string name="home_reminders">Reminders</string>
+    <string name="home_reminders_fired">%1$d fired</string>
+
     <!-- Common -->
     <string name="action_ok">OK</string>
     <string name="action_save">Save</string>

@@ -41,7 +41,7 @@ class TaskAndReminderDataTest {
     @Before
     fun setUp() {
         db = inMemoryDatabase(clock, ids)
-        tasks = TaskRepository(db, clock, ids)
+        tasks = TaskRepository(db, FakeScheduler(), clock, ids)
     }
 
     @After

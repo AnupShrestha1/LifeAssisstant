@@ -26,6 +26,12 @@ import kotlin.reflect.KClass
 /** Task editor; [taskId] null creates a new task. */
 @Serializable data class TaskEditRoute(val taskId: String? = null)
 
+/** Reminder list + fired-reminder inbox (reached from Home, task editor, and notifications). */
+@Serializable data object RemindersRoute
+
+/** Reminder editor; both ids null creates a standalone reminder, [taskId] attaches a new one to a task. */
+@Serializable data class ReminderEditRoute(val reminderId: String? = null, val taskId: String? = null)
+
 /** The primary destinations shown in the bottom bar / navigation rail. */
 enum class TopLevelDestination(
     val route: Any,

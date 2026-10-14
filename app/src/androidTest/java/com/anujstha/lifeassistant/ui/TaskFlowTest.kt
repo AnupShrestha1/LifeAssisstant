@@ -22,7 +22,6 @@ import com.anujstha.lifeassistant.domain.model.TaskStatus
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -65,11 +64,13 @@ class TaskFlowTest {
         composeRule.waitUntilAtLeastOneExists(hasText(title), timeoutMillis = 5_000)
         val checkbox = composeRule.onNode(isToggleable() and hasParent(hasText(title)))
         checkbox.performClick()
-        checkbox.assertIsOn()
 
-        runBlocking {
-            assertEquals(TaskStatus.COMPLETED, repo.observeTasks(query = title).first().single().status)
+        // The change goes through the database and back to the list asynchronously.
+        composeRule.waitUntil(5_000) {
+            runBlocking { repo.observeTasks(query = title).first().single().status == TaskStatus.COMPLETED }
         }
+        composeRule.waitForIdle()
+        checkbox.assertIsOn()
         tab("Completed").performClick()
         composeRule.waitUntilAtLeastOneExists(hasText(title), timeoutMillis = 5_000)
         composeRule.onNodeWithText(title).assertIsDisplayed()

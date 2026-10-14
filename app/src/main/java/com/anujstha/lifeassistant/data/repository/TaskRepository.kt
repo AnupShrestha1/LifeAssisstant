@@ -9,6 +9,7 @@ import com.anujstha.lifeassistant.domain.model.RecurrenceRule
 import com.anujstha.lifeassistant.domain.model.TaskStatus
 import com.anujstha.lifeassistant.domain.model.validate
 import com.anujstha.lifeassistant.domain.usecase.Recurrence
+import com.anujstha.lifeassistant.notifications.ReminderScheduler
 import com.anujstha.lifeassistant.util.IdGenerator
 import com.anujstha.lifeassistant.util.escapeLike
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +39,7 @@ data class TaskInput(
  */
 class TaskRepository(
     private val db: AppDatabase,
+    private val reminderScheduler: ReminderScheduler,
     private val clock: Clock,
     private val ids: IdGenerator,
 ) {
@@ -123,8 +125,11 @@ class TaskRepository(
         if (task.status.isOpen && !status.isOpen) generateNextOccurrence(updated) else null
     }
 
-    /** Deletes this task (one occurrence of a series) and, by cascade, its reminders. */
-    suspend fun delete(id: String): Boolean = dao.delete(id) > 0
+    /** Deletes this task (one occurrence of a series) and its reminders, cancelling their alarms first. */
+    suspend fun delete(id: String): Boolean {
+        db.reminderDao().getForTask(id).forEach(reminderScheduler::cancel)
+        return dao.delete(id) > 0
+    }
 
     suspend fun createCategory(name: String): TaskCategoryEntity = db.withTransaction {
         val clean = name.trim().replace(Regex("\\s+"), " ")

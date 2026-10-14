@@ -6,6 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +27,10 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)) {
+fun HomeScreen(
+    onOpenReminders: () -> Unit,
+    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val dateFormatter = remember { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL) }
 
@@ -43,6 +51,16 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Fact
             state.today?.let {
                 Text(text = dateFormatter.format(it), style = MaterialTheme.typography.headlineSmall)
             }
+            ListItem(
+                modifier = Modifier.padding(top = 8.dp).clickable(onClick = onOpenReminders),
+                leadingContent = { Icon(Icons.Filled.Notifications, contentDescription = null) },
+                headlineContent = { Text(stringResource(R.string.home_reminders)) },
+                supportingContent = if (state.firedReminders > 0) {
+                    { Text(stringResource(R.string.home_reminders_fired, state.firedReminders), color = MaterialTheme.colorScheme.error) }
+                } else {
+                    null
+                },
+            )
             Text(
                 text = stringResource(R.string.home_dashboard_pending),
                 style = MaterialTheme.typography.bodyMedium,
