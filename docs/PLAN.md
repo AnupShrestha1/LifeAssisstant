@@ -12,7 +12,7 @@ no backend or accounts in v1.
 | minSdk | 26 (Android 8.0) | Native `java.time`, notification channels, adaptive icons; ~97% device coverage |
 | compile / target SDK | 35 | Installed platform; Play-compliant |
 | Build | Gradle 8.9, AGP 8.7.3, Kotlin 2.0.21, Compose BOM 2024.12.01, JDK 17 | Known-compatible set |
-| Persistence | Room 2.6 (KSP), DataStore Preferences | Relational data in Room; settings in DataStore |
+| Persistence | Room 2.7 (KSP2), DataStore Preferences | Relational data in Room; settings in DataStore |
 | Async | Coroutines + Flow | Reactive queries drive the UI |
 | Background | AlarmManager (reminder delivery) + WorkManager (maintenance) | See §4 |
 | DI | Hand-written `AppContainer` + ViewModel factories | ~8 repositories; Hilt's codegen/setup not justified yet. Migration to Hilt is a contained refactor. |
@@ -133,7 +133,7 @@ Each milestone: build, run relevant tests, report what actually ran.
 
 1. ✅ Project setup, Material 3 theme (light/dark/system), adaptive icon, privacy manifest
 2. ✅ Navigation shell + DataStore settings (theme, currency, time zone, time format)
-3. Room database, entities, DAOs, repositories, `Clock`; DAO tests
+3. ✅ Room database, entities, DAOs, repositories, `Clock`; DAO tests
 4. Task manager (CRUD, filters, sort, recurrence, overdue)
 5. Reminders: AlarmManager, receivers, WorkManager, permissions, dedup
 6. Journal: editor, tags, moods, search/filter, calendar view

@@ -30,6 +30,8 @@ class MainActivityTest {
 
     @Before
     fun waitForSettingsLoad() {
+        // Start from a known theme even if an earlier, interrupted run left it changed.
+        resetTheme()
         composeRule.waitUntilAtLeastOneExists(hasText("Today"), timeoutMillis = 5_000)
     }
 
@@ -67,7 +69,8 @@ class MainActivityTest {
         navItem("Settings").performClick()
 
         composeRule.onNodeWithText("Theme").performClick()
-        composeRule.onNodeWithText("Dark").performClick()
+        // The radio option in the dialog (selectable), not the current-value label.
+        composeRule.onAllNodesWithText("Dark").filterToOne(isSelectable()).performClick()
 
         composeRule.waitUntilAtLeastOneExists(hasText("Dark"), timeoutMillis = 5_000)
         composeRule.onNodeWithText("Dark").assertIsDisplayed()

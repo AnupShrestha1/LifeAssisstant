@@ -10,7 +10,7 @@ notification design and milestones.
 
 ## Status
 
-Milestone 2 of 12 — navigation shell and settings (theme, currency, time zone, time format). Journal, expenses, tasks and reminders are not built yet.
+Milestone 3 of 12 — navigation, settings, and the Room database layer (all tables, DAOs and repositories). The journal, expense, task and reminder screens are not built yet.
 
 ## Requirements
 

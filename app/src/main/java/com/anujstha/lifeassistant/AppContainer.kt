@@ -1,8 +1,15 @@
 package com.anujstha.lifeassistant
 
 import android.content.Context
+import com.anujstha.lifeassistant.data.database.AppDatabase
 import com.anujstha.lifeassistant.data.preferences.SettingsRepository
 import com.anujstha.lifeassistant.data.preferences.settingsDataStore
+import com.anujstha.lifeassistant.data.repository.BudgetRepository
+import com.anujstha.lifeassistant.data.repository.ExpenseCategoryRepository
+import com.anujstha.lifeassistant.data.repository.JournalRepository
+import com.anujstha.lifeassistant.data.repository.TaskRepository
+import com.anujstha.lifeassistant.data.repository.TransactionRepository
+import com.anujstha.lifeassistant.util.IdGenerator
 import java.time.Clock
 
 /**
@@ -14,6 +21,16 @@ class AppContainer(context: Context) {
 
     /** Single source of "now" so time-dependent logic can be tested with a fixed clock. */
     val clock: Clock = Clock.systemUTC()
+    val ids: IdGenerator = IdGenerator.Random
 
     val settingsRepository: SettingsRepository = SettingsRepository(appContext.settingsDataStore)
+
+    /** Opened lazily on first use, off the main thread (Room runs queries on its own executors). */
+    val database: AppDatabase by lazy { AppDatabase.build(appContext, clock, ids) }
+
+    val journalRepository by lazy { JournalRepository(database.journalDao(), clock, ids) }
+    val expenseCategoryRepository by lazy { ExpenseCategoryRepository(database, clock, ids) }
+    val transactionRepository by lazy { TransactionRepository(database, clock, ids) }
+    val budgetRepository by lazy { BudgetRepository(database, clock, ids) }
+    val taskRepository by lazy { TaskRepository(database, clock, ids) }
 }
